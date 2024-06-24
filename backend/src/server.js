@@ -2,8 +2,13 @@ const express = require('express');
 require('colors');
 require('dotenv').config();
 const app = express();
+const connectDB = require('./config/connectDB');
 
 
+
+//connecting to the database
+
+connectDB();
 
 // listening the server
 
