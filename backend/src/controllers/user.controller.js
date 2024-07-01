@@ -5,6 +5,7 @@ const httpStatus = require("http-status");
 const userService = require('../services/user.service')
 const ApiError = require('../utils/apiError')
 const catchAsync = require('../utils/catchAsync')
+const { checkPasswordStrength } = require('../utils/passwordUtils')
 
 // REGISTER NEW USER
 // UNPROTECTED ROUTE
@@ -38,8 +39,9 @@ const registerUser = catchAsync(async (req, res) => {
 
     }
 
+    const isPasswordStrong = await checkPasswordStrength(password);
     // check password strength
-    if (!checkPasswordStrength(password)) {
+    if (!isPasswordStrong) {
         throw new ApiError(httpStatus.BAD_REQUEST, "Password is not strong enough");
     }
 
@@ -47,25 +49,7 @@ const registerUser = catchAsync(async (req, res) => {
     const salt = await bcrypt.genSalt(12)
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // function to check password strength
-    function checkPasswordStrength(password) {
-        // implement your password strength checking logic here
-        // return true if password is strong enough, false otherwise
 
-        const MIN_PASSWORD_LENGTH = 8;
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasLowerCase = /[a-z]/.test(password);
-        const hasNumbers = /\d/.test(password);
-        const hasSpecialChars = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password);
-
-        return (
-            password.length >= MIN_PASSWORD_LENGTH &&
-            hasUpperCase &&
-            hasLowerCase &&
-            hasNumbers &&
-            hasSpecialChars
-        );
-    }
 
     // create new user
 

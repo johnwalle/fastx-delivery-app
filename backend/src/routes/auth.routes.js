@@ -5,11 +5,25 @@ const { authLimiter } = require('../Middleware/auth.limiter');
 
 
 const {
-    login
+    login,
+    refreshToken,
+    forgotPassword,
+    resetPassword,
 } =
     require('../controllers/auth.controller');
 
 router.post('/login', authLimiter, login);
+router.post(
+    "/refresh-token", refreshToken);
+    
+router.post(
+    "/forgot-password",
+    forgotPassword
+);
 
+router.post(
+    "/reset-password/:token",
+    resetPassword
+);
 
 module.exports = router;

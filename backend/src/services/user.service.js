@@ -46,6 +46,12 @@ const deleteUser = async (id) => {
     }
 };
 
+
+
+
+
+
+
 module.exports = {
     createUser,
     getUser,
@@ -53,5 +59,5 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-    getUserByToken
+    getUserByToken,
 };

@@ -1,9 +1,7 @@
 const { Schema, model } = require('mongoose');
-const tokenTypes = require('../config/tokens');
-
+const tokenTypes = require('../config/token');
 
 const tokenSchema = new Schema({
-
     token: {
         type: String,
         required: true,
@@ -16,7 +14,7 @@ const tokenSchema = new Schema({
     },
     type: {
         type: String,
-        enum: [tokenTypes.ACESSS, tokenTypes.REFRESH, tokenTypes.RESET_PASSWORD],
+        enum: [tokenTypes.ACCESS, tokenTypes.REFRESH, tokenTypes.RESET_PASSWORD],
         required: true,
     },
     expires: {
@@ -28,6 +26,5 @@ const tokenSchema = new Schema({
         default: false,
     },
 }, { timestamps: true });
-
 
 module.exports = model('Token', tokenSchema);

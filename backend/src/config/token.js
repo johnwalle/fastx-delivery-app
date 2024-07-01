@@ -4,4 +4,4 @@ const tokenTypes = {
     RESET_PASSWORD: "resetPassword",
 };
 
-module.exports = { tokenTypes };
+module.exports = tokenTypes;
