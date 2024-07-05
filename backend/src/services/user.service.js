@@ -32,7 +32,7 @@ const updateUser = async (userId, updateData) => {
         return updatedUser;
     } catch (error) {
         // Handle any potential error
-        throw new Error("Failed to update course");
+        throw new Error("Failed to update user");
     }
 };
 

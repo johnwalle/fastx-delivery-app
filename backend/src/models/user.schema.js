@@ -8,7 +8,6 @@ const userSchema = new Schema({
         type: String,
         required: true,
         trim: true
-
     },
     email: {
         type: String,
@@ -31,7 +30,7 @@ const userSchema = new Schema({
     role: {
         type: String,
         default: 'user',
-        enum: ['user', 'admin']
+        enum: ['user', 'admin', 'super-admin']
     }
 }, { timestamps: true });
 

@@ -68,61 +68,23 @@ const registerUser = catchAsync(async (req, res) => {
 });
 
 
-
-
-// LOGIN USER
-// UNPROTECTED ROUTE
-// POST /api/users/login
-
-const loginUser = async (req, res) => {
-
-    const { email, password } = req.body
-
-    // check if the fields are empty
-
-    if (!email || !password) {
-        res.status(400).json({ message: 'Please fill all the fields.' })
-    }
-
-    // check if user exists
-    const user = await User.findOne({ email })
-    if (!user) {
-        return res.status(400).json({ message: 'Invalid email' })
-    }
-
-    // check if the user password is correct
-    const isMatch = await bcrypt.compare(password, user.password)
-
-    if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid password' })
-    }
-
-    // send response
-    res.status(200).json({
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        token: genToken(user._id)
-    });
-}
-
 // GET USER PROFILE
 // PROTECTED ROUTE
 // GET /api/users/profile
 
-// const getUserProfile = async (req, res) => {
+const getUserProfile = catchAsync(async (req, res) => {
 
-//     const user = await User.findOne({ _id: req.user._id })
-//     if (user) {
-//         res.status(200).json({
-//             _id: user._id,
-//             fullName: user.fullName,
-//             email: user.email
-//         })
-//     } else {
-//         res.status(404).json({ message: 'User not found' })
-//     }
-// }
+    const user = await userService.getUserById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+
+    res.status(httpStatus.OK).json(user);
+
+}
+)
+
 
 //get user by id
 //unprotected route
@@ -152,17 +114,77 @@ const getAllUsers = catchAsync(async (req, res) => {
 })
 
 
-const genToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
-    })
-}
+// deleting a user 
+const deleteUser = catchAsync(async (req, res) => {
+    const userId = req.user._id.toString();
+    const { id } = req.params;
+
+    if (userId !== id) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized to delete this user");
+    }
+    const user = await userService.deleteUser(id);
+
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+    res.status(httpStatus.OK).json({ message: "User deleted successfully" });
+});
+
+
+
+// update user data
+
+const updateUser = catchAsync(async (req, res) => {
+    const userId = req.user._id.toString();
+    const { id } = req.params;
+    const { fullName, email } = req.body;
+
+    if (userId !== id) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized to update this user");
+    }
+
+    const user = await userService.getUserById(id);
+
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+
+    // Check if the fullName contains both the first name and last name
+
+    const isFullNameValid = fullName && fullName.split(' ').length >= 2;
+
+    if (fullName && !isFullNameValid) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Full name must contain both first and last name");
+    }
+
+    const userData = {
+        fullName,
+        email
+    }
+
+    // check if the email is already taken
+
+    const userExists = await userService.getUserByEmail(email);
+
+    if (userExists && userExists._id.toString() !== id) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Email is already taken");
+    }
+    
+    const updatedUser = await userService.updateUser(id, userData);
+
+    res.status(httpStatus.OK).json({
+        message: "User updated successfully",
+        updatedUser: updatedUser
+    });
+});
+
 
 
 module.exports = {
     registerUser,
-    loginUser,
-    // getUserProfile,
+    getUserProfile,
     getUserById,
-    getAllUsers
+    getAllUsers,
+    deleteUser,
+    updateUser
 }
