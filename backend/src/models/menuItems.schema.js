@@ -33,7 +33,7 @@ const menuItemSchema = new Schema({
         ref: 'Restaurant',
         required: true
     }
-});
+}, { timestamps: true });
 
 const MenuItem = model('MenuItem', menuItemSchema);
 
