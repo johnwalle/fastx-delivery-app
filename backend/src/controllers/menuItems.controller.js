@@ -10,7 +10,7 @@ const Restaurant = require('../models/restaurant.schema')
 const createMenuItem = catchAsync(async (req, res) => {
 
 
-    const { name, description, price, category, tags, rating, restaurantEmail } = req.body;
+    const { name, description, price, category, tags, restaurantEmail } = req.body;
     const imageFile = req.file.buffer;
 
     const uploadImage = () => {
@@ -48,7 +48,6 @@ const createMenuItem = catchAsync(async (req, res) => {
         description,
         price,
         category,
-        rating,
         tags,
         restaurant: restaurant._id,
         image: imageUrl
@@ -117,13 +116,13 @@ const deleteMenuItem = catchAsync(async (req, res) => {
 
 const updateMenuItem = catchAsync(async (req, res) => {
 
-    const  menuId  = req.params.menuId;
+    const menuId = req.params.menuId;
     let menuItem = await menuItemsService.getMenuItemById(menuId);
     if (!menuItem) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Menu item not found');
     }
 
-    const { name, description, price, category, tags, rating } = req.body;
+    const { name, description, price, category, tags } = req.body;
 
 
     if (req.file) {
@@ -163,7 +162,6 @@ const updateMenuItem = catchAsync(async (req, res) => {
     menuItem.category = category;
     menuItem.description = description;
     menuItem.tags = tags;
-    menuItem.rating = rating;
 
 
     const updatedMenuItem = await menuItemsService.updateMenuItem(menuId, menuItem);
