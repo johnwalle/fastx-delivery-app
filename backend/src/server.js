@@ -8,7 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const restaurantRoutes = require('./routes/restaurant.routes');
 const menuRoutes = require('./routes/menu.routes')
 const reviewRoutes = require('./routes/review.routes')
-
+const cartRoutes = require('./routes/cart.routes');
 // middleware
 
 app.use(express.json());
@@ -17,6 +17,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/cart', cartRoutes);
 
 //connecting to the database
 connectDB();

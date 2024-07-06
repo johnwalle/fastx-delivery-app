@@ -23,7 +23,7 @@ const requireSignIn = async (req, res, next) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(httpStatus.UNAUTHORIZED).json({ message: 'Not authorized, token failed' });
+        res.status(httpStatus.UNAUTHORIZED).json({ message: error.message });
     }
 };
 
