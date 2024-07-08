@@ -34,8 +34,10 @@ const addToCart = catchAsync(async (req, res) => {
         throw new ApiError(404, 'Menu item not found');
     }
 
+    const restaurantId = menuItem.restaurant;
+
     // Find or create the user's cart
-    const cart = await cartService.createCart(userId, menuItemId, quantity);
+    const cart = await cartService.createCart(userId, menuItemId, quantity, restaurantId);
     if (!cart) {
         throw new ApiError(400, 'Error adding item to cart');
     }
