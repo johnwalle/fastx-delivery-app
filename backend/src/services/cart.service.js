@@ -10,6 +10,12 @@ const getCartByUserId = async (userId) => {
     return cart;
 }
 
+// get cart by id
+
+const getCartById = async (cartId) => {
+    const cart = Cart.findById(cartId);
+    return cart;
+}
 
 // create new cart 
 
@@ -100,11 +106,30 @@ const clearCart = async (userId) => {
     return cart;
 }
 
+// update cart status by id
+
+const updateCartStatus = async (cartId, status) => {
+    const cart = await getCartById(cartId);
+    if (!cart) {
+        throw new ApiError(404, 'Cart not found');
+    }
+
+    cart.status = status;
+    await cart.save();
+
+    return cart;
+}
+
+
+
+
 module.exports = {
     getCartByUserId,
     createCart,
     removeFromCart,
-    clearCart
+    clearCart,
+    getCartById,
+    updateCartStatus
 };
 
 
