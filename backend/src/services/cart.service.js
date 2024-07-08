@@ -13,11 +13,18 @@ const getCartByUserId = async (userId) => {
 
 // create new cart 
 
-const createCart = async (userId, menuItemId, quantity) => {
+const createCart = async (userId, menuItemId, quantity, restaurantId) => {
     // Find the menu item
     let cart = await getCartByUserId(userId);
-    if (!cart) {
+    if (!cart || cart.status !== 'pending') {
         cart = new Cart({ user: userId });
+    }
+
+    if (cart?.items.length > 0) {
+        const isRestaurantMatched = cart.items.every(item => item.restaurant.toString() === restaurantId.toString());
+        if (!isRestaurantMatched) {
+            throw new ApiError(400, 'Cannot add items from different restaurants to the same cart');
+        }
     }
 
     // getting the menu item by id
@@ -29,6 +36,7 @@ const createCart = async (userId, menuItemId, quantity) => {
         existingItem.quantity += quantity;
     } else {
         cart.items.push({
+            restaurant: menuItem.restaurant,
             menuItem: menuItemId,
             quantity,
             price: menuItem.price
@@ -87,7 +95,6 @@ const clearCart = async (userId) => {
 
     cart.items = [];
     cart.totalPrice = 0.00;
-
     await cart.save();
 
     return cart;
