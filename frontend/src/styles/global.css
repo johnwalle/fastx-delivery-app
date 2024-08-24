@@ -6,7 +6,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    --primary-color: #C91313;
+    --primary-color: #A40C0C;
     --secondary-color: #6c757d;
 
     --text-color: #FAEBEB;
@@ -17,7 +17,7 @@
     --border-color: #ccc;
     --border-radius: 4px;
 
-    --btn-primary-color: #C91313;
+    --btn-primary-color: #A40C0C;
     --btn-secondary-color: #0A0A0A;
 
 }
@@ -62,21 +62,11 @@ h1 {
 }
 
 h2 {
-    font-size: 1.75em;
+    font-size: 45px;
 }
 
 h3 {
     font-size: 1.5em;
-}
-
-/* Style lists */
-ul,
-ol {
-    margin-bottom: 1em;
-}
-
-li {
-    margin-bottom: 0.5em;
 }
 
 /* Style buttons */
@@ -130,11 +120,17 @@ select:focus {
     h1 {
         font-size: 36px; /* Example size for small screens */
     }
+    h2 {
+        font-size: 35px;
+    }
 }
 
 /* Adjust font size for extra small screens (e.g., very small devices) */
 @media (max-width: 480px) {
     h1 {
         font-size: 28px; /* Example size for very small screens */
+    }
+    h2 {
+        font-size: 25px;
     }
 }

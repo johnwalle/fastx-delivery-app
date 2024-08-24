@@ -1,0 +1,96 @@
+.heading {
+    max-width: 600px;
+    margin: auto;
+}
+
+.mission {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #A40C0C;
+    padding: 100px;
+}
+
+@media (max-width: 768px) {
+    .mission {
+        padding: 30px;
+    }
+}
+
+.numbered_list {
+    counter-reset: list-counter;
+}
+
+.numbered_list .feature_item {
+    position: relative;
+    padding-left: 4em;
+    padding-top: 2em;
+    /* Adjust as needed for space */
+}
+
+.numbered_list .feature_item::before {
+    content: counter(list-counter);
+    counter-increment: list-counter;
+    position: absolute;
+    left: 0;
+    top: 1.3em;
+    color: white;
+    background-color: #A40C0C;
+    border: 2px solid rgba(209, 207, 207, 0.324);
+    border-radius: 7px;
+    padding: 0.2em 0.5em;
+    font-size: 1.7em;
+    font-family: 'Dela Gothic One', sans-serif;
+    width: 50px;
+    height: 50px;
+}
+
+.border_shadow {
+    -webkit-box-shadow: -1px 7px 95px 16px rgba(117, 0, 0, 1);
+    -moz-box-shadow: -1px 7px 95px 16px rgba(117, 0, 0, 1);
+    box-shadow: -1px 7px 95px 16px rgba(117, 0, 0, 1);
+}
+
+
+.benefits_customers {
+    background-image: url('https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 2rem;
+    /* Adjust as needed */
+    border-radius: 0.5rem;
+    /* Optional: to match rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Optional: to match shadow effect */
+    /* Optional: width and height for demonstration purposes */
+    width: 100%;
+    /* Adjust width as needed */
+    height: 400px;
+    /* Adjust height as needed */
+}
+
+
+
+.benefits_customer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 100px 20px;    
+    position: relative;
+    overflow: hidden;
+}
+
+.benefits_customer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://cdn.gamma.app/2lpoi8uqaizozlf/generated-images/QZ1oQiV4i_YfvClCMGnn8.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.2) contrast(1.2) saturate(1.7); /* Adjust brightness, contrast, and saturation */
+    z-index: -1;
+}
