@@ -52,7 +52,7 @@ h6 {
     color: var(--text-color);
 }
 
-p {
+p ,ul, li{
     color: var(--text-color);
     font-family: var(--text-font)
 }
@@ -134,3 +134,4 @@ select:focus {
         font-size: 25px;
     }
 }
+
