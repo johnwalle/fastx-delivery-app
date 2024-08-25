@@ -1,5 +1,6 @@
 import React from 'react'
 import login from '../../assets/login.png'
+import { Link } from 'react-router-dom';
 
 function LoginPage() {
     return (
@@ -18,7 +19,11 @@ function LoginPage() {
                         <label className='text-white'>Password</label>
                         <input type='password' className='w-full mb-10' />
 
-                        <button className='primary w-1/2 md:mx-36 mx-16'>Sign In</button>
+                        <button className='primary w-full'>Sign In</button>
+                        <div className='mt-5 flex items-center justify-between'>
+                            <Link to='/forgot'><button className='secondary'>Forgot Password</button></Link>
+                            <div className='text-white flex gap-2 items-center'>Not member?<Link to='/signup'><button className='secondary'>SignUp</button></Link></div>
+                        </div>
                     </form>
                 </div>
             </div>
