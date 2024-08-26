@@ -1,5 +1,5 @@
 import React from 'react'
-import register from '../../assets/register.png'
+import register from '../../assets/register.jpg'
 import { Link } from 'react-router-dom';
 
 function SignupPage() {
@@ -7,9 +7,9 @@ function SignupPage() {
         <div>
             <div className='grid pt-14 grid-cols-1 lg:grid-cols-2'>
                 <div className='hidden md:hidden lg:flex'>
-                    <img src={register} width={100} className='w-full h-screen object-cover' />
+                    <img src={register} className='w-full h-auto object-cover' />
                 </div>
-                <div className='h-screen flex flex-col items-center justify-center mx-10 md:mx-20'>
+                <div className='h-screen -pt-20 sm:pt-24 flex flex-col items-center justify-center mx-10 md:mx-20'>
                     <h2>Sign Up</h2>
                     <form>
                         <label className='text-white'>Full Name:</label>

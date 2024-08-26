@@ -1,11 +1,11 @@
 import React from 'react'
-import login from '../../assets/login.png'
+import login from '../../assets/login.jpg'
 import { Link } from 'react-router-dom';
 
 function LoginPage() {
     return (
         <div>
-            <div className='grid pt-14 grid-cols-1 lg:grid-cols-2'>
+            <div className='grid pt-0 sm:pt-14 grid-cols-1 lg:grid-cols-2'>
                 <div className='hidden md:hidden lg:flex'>
                     <img src={login} width={100} className='w-full h-screen object-cover' />
                 </div>
@@ -20,8 +20,8 @@ function LoginPage() {
                         <input type='password' className='w-full mb-10' />
 
                         <button className='primary w-full'>Sign In</button>
-                        <div className='mt-5 flex items-center justify-between'>
-                            <Link to='/forgot'><button className='secondary'>Forgot Password</button></Link>
+                        <div className='mt-5 flex flex-col sm:flex-row items-center justify-between'>
+                            <Link to='/forgot'><button className='secondary my-4'>Forgot Password</button></Link>
                             <div className='text-white flex gap-2 items-center'>Not member?<Link to='/signup'><button className='secondary'>SignUp</button></Link></div>
                         </div>
                     </form>
