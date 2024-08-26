@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import Footer from './components/footer'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           {/* Forgot Password Page */}
           <Route path='/forgot' element={<ForgotPasswordPage />} />
         </Routes>
+        <Footer />
       </Router>
     </div>
   );
