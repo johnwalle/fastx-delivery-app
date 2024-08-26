@@ -12,10 +12,17 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+          {/* Landing Page */}
           <Route path='/' element={<LandingPage />} />
+
+          {/* Login Page */}
           <Route path='/login' element={<LoginPage />} />
+
+          {/* Signup Page */}
           <Route path='/signup' element={<SignupPage />} />
-          <Route path='forgot' element={<ForgotPasswordPage />} />
+
+          {/* Forgot Password Page */}
+          <Route path='/forgot' element={<ForgotPasswordPage />} />
         </Routes>
       </Router>
     </div>
