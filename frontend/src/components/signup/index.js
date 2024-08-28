@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useRegister from '../../hooks/useRegister';
 
 function SignupForm() {
-    const { register, error, isLoading } = useRegister();
+    const { register, error, isLoading, SnackbarComponent } = useRegister();
 
     // State to manage form values
     const [formValues, setFormValues] = useState({
@@ -118,6 +118,7 @@ function SignupForm() {
                     Already a member?<Link to='/login'><button className='secondary'>Sign In</button></Link>
                 </div>
             </form>
+            {SnackbarComponent}
         </div>
     );
 }

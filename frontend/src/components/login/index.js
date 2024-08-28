@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useLogin from '../../hooks/useLogin';
 
 function LoginForm() {
-    const { login, error, isLoading } = useLogin();
+    const { login, error, isLoading, SnackbarComponent } = useLogin();
 
     // State to manage form values
     const [formValues, setFormValues] = useState({
@@ -72,6 +72,7 @@ function LoginForm() {
                     </div>
                 </div>
             </form>
+            {SnackbarComponent}
         </div>
     );
 }

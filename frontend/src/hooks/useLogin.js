@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { Snackbar, Alert } from '@mui/material';
+
 
 const useLogin = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [open, setOpen] = useState(false)
+
 
     const login = async (email, password) => {
         console.log('All the form values', "email: ", email, "password: ", password);
@@ -18,6 +22,7 @@ const useLogin = () => {
 
             if (response.status === 200) {
                 setError(null);
+                setOpen(true);
                 console.log('user-data', response.data);
             } else {
                 setError(`Unexpected response status: ${response.status}`);
@@ -30,11 +35,35 @@ const useLogin = () => {
             setIsLoading(false);
         }
     };
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false); // Close the Snackbar
+    };
 
     return {
         login,
         error,
-        isLoading
+        isLoading,
+        SnackbarComponent: (
+            <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Login successful!
+                </Alert>
+            </Snackbar>
+        )
+
     };
 };
 

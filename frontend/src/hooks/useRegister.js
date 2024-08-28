@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Snackbar, Alert } from '@mui/material';
 
 const useRegister = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const [open, setOpen] = useState(false); // State to control Snackbar visibility
+    const navigate = useNavigate();
 
     const register = async (fullName, email, phoneNumber, password) => {
         console.log('All the form values', "fullName", fullName, "email", email, "phoneNumber", phoneNumber, "password", password);
@@ -20,7 +22,10 @@ const useRegister = () => {
 
             if (response.status === 201) {
                 setError(null);
-                navigate('/login'); // Navigate to the login page on success
+                setOpen(true); // Show success Snackbar
+                setTimeout(() => {
+                    navigate('/login'); // Navigate to the login page after showing the toast
+                }, 2000); // Adjust the delay as needed
                 console.log('data', response.data);
             } else {
                 setError(`Unexpected response status: ${response.status}`);
@@ -28,16 +33,40 @@ const useRegister = () => {
 
         } catch (error) {
             console.error('Registration failed:', error);
-            setError(error.response?.data?.message || error.message); // Capture server-side error message if available
+            setError(error.response?.data?.message || error.message);
         } finally {
             setIsLoading(false);
         }
     };
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false); // Close the Snackbar
+    };
+
     return {
         register,
         error,
-        isLoading
+        isLoading,
+        SnackbarComponent: (
+            <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Registration successful!
+                </Alert>
+            </Snackbar>
+        )
     };
 };
 
