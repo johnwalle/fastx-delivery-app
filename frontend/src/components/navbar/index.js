@@ -16,7 +16,7 @@ const Navbar = () => {
         { name: 'Restaurant 2', route: '/restaurant/2' },
         { name: 'Restaurant 3', route: '/restaurant/3' },
         { name: 'Restaurant 4', route: '/restaurant/4' },
-        { name: 'All Restaurants', route: '/restaurant' },
+        { name: 'All Restaurants', route: '/allRestaurants' },
         // Add more restaurants as needed
     ];
 

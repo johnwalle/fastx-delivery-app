@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Footer from './components/footer';
+import AllRestaurantsPage from './pages/AllRestaurantsPage';
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function MainContent() {
 
         {/* Forgot Password Page */}
         <Route path='/forgot' element={<ForgotPasswordPage />} />
+
+        {/* All restaurants page */}
+        <Route path='/allRestaurants' element={<AllRestaurantsPage />} />
       </Routes>
       {!shouldHideFooter && <Footer />}
     </>
