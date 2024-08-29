@@ -38,6 +38,9 @@ function MainContent() {
 
         {/* Forgot Password Page */}
         <Route path='/forgot' element={<ForgotPasswordPage />} />
+
+         {/* Email sent*/}
+        
       </Routes>
       {!shouldHideFooter && <Footer />}
     </>
