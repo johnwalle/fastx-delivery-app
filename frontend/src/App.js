@@ -22,7 +22,7 @@ function MainContent() {
   const location = useLocation();
 
   // Check if the current path is '/login' or '/signup'
-  const shouldHideFooter = ['/login', '/signup'].includes(location.pathname);
+  const shouldHideFooter = ['/login', '/signup', '/forgot'].includes(location.pathname);
 
   return (
     <>
