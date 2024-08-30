@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, matchPath } from 'react-router-dom'; // Import matchPath
 import Navbar from './components/navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -6,6 +6,7 @@ import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Footer from './components/footer';
 import AllRestaurantsPage from './pages/AllRestaurantsPage';
+import ResetPassword from './components/resetPassword';
 
 function App() {
   return (
@@ -22,8 +23,9 @@ function App() {
 function MainContent() {
   const location = useLocation();
 
-  // Check if the current path is '/login' or '/signup'
-  const shouldHideFooter = ['/login', '/signup', '/forgot'].includes(location.pathname);
+  // Use matchPath to determine if the current path matches the dynamic routes
+  const shouldHideFooter = ['/login', '/signup', '/forgot'].includes(location.pathname) ||
+    matchPath('/reset-password/:resetToken', location.pathname);
 
   return (
     <>
@@ -42,7 +44,12 @@ function MainContent() {
 
         {/* All Restaurants Page */}
         <Route path='/restaurants' element={<AllRestaurantsPage />} />
+
+        {/* Reset Password */}
+        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
       </Routes>
+
+      {/* Conditionally render the Footer */}
       {!shouldHideFooter && <Footer />}
     </>
   );
