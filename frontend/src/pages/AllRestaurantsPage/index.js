@@ -75,7 +75,7 @@ function AllRestaurantsPage() {
                                     height={500}
                                     className='h-[130px] object-cover rounded-xl' />
                                 <div className='mt-2 '>
-                                    <Link to={'#'}><h2 className='font-medium text-black text-xl'>{item.name}</h2></Link>
+                                    <Link to={'/detail'}><h2 className='font-medium text-black text-xl'>{item.name}</h2></Link>
                                     <div className='flex justify-between items-center'>
                                         <div className='flex items-center gap-2'>
                                             <img src={star}
