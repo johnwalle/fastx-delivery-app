@@ -22,18 +22,18 @@ function AllRestaurantsPage() {
 
     return (
         <div className='pt-28 pb-10'>
-            <div className='grid grid-cols-10'>
-                <div className='col-span-2 px-5 pt-20'>
-                    <h2 className='text-2xl text-white font-bold'>Filter By:</h2>
-                    <input type='search' placeholder='Find Restaurants' className='w-full mt-5' />
-                    <select className='mt-5 w-full'>
+            <div className='lg:grid lg:grid-cols-10 flex flex-col lg:gap-0 gap-5'>
+                <div className='flex flex-col col-span-2 px-5 pt-0 lg:pt-20'>
+                    <h2 className='md:text-2xl text-xl text-white font-bold'>Filter By:</h2>
+                    <input type='search' placeholder='Find Restaurants' className='lg:w-full md:w-1/2 w-3/4  lg:mt-5' />
+                    <select className='mt-5 lg:w-full md:w-1/2 w-3/4'>
                         {cusines.map((cusine, index) => (
                             <option>{cusine}</option>
                         ))}
                     </select>
                 </div>
-                <div className='col-span-8 pr-5'>
-                    <div className='grid grid-cols-4 items-center gap-5'>
+                <div className='lg:col-span-8 col-span-10 px-5 lg:pr-5'>
+                    <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center gap-5'>
                         {restaurants.map((item, index) => (
                             <div key={index} className='p-2 rounded-lg bg-[#fff] flex flex-col items-start '>
                                 <img src={burgerbliss}
