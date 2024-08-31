@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import styles from './styles.module.css';
 import { motion } from 'framer-motion';
+import burgerbliss from '../AllRestaurantsPage/assets/burger-bliss.png';
+import star from '../AllRestaurantsPage/assets/star.png';
+import { Link } from 'react-router-dom';
+
 
 const LandingPage = () => {
 
@@ -19,6 +23,8 @@ const LandingPage = () => {
     ]);
 
 
+
+
     const toggleFAQ = (id) => {
         setFaqs((prevFaqs) => {
             const updatedFaqs = prevFaqs.map((faq) =>
@@ -27,6 +33,13 @@ const LandingPage = () => {
             return updatedFaqs;
         });
     };
+
+
+    const restaurants = [
+        { name: "The Spicy Spoon", rating: 4.5, cuisine: ["Indian", "Thai"] },
+        { name: "Pasta Paradise", rating: 4.7, cuisine: ["Italian", "Mediterranean"] },
+        { name: "Sushi Supreme", rating: 4.8, cuisine: ["Japanese"] },
+    ];
 
 
     return (
@@ -90,7 +103,7 @@ const LandingPage = () => {
 
 
 
-            <motion.div
+            {/* <motion.div
                 className={`${styles.mission} p-10 mx-auto`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +151,83 @@ const LandingPage = () => {
                         </p>
                     </motion.div>
                 </motion.div>
-            </motion.div>
+            </motion.div> */}
+            <div className="bg-[#A40C0C] py-16 px-5">
+                <motion.h2
+                    className='pl-9 pb-4'
+                    initial={{ opacity: 0, y: -20 }} // Initial state for heading animation
+                    whileInView={{ opacity: 1, y: 0 }} // Animation when the heading comes into view
+                    transition={{ duration: 1, ease: 'easeOut' }} // Smooth transition effect
+                >
+                    Featured Restaurants
+                </motion.h2>
+
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center gap-5 px-5">
+                    {restaurants.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            className="p-4 rounded-lg bg-white flex flex-col items-start shadow-md"
+                            whileInView={{ opacity: 1, scale: 1 }} // Animation when the card comes into view
+                            initial={{ opacity: 0, scale: 0.95 }} // Initial state before it comes into view
+                            transition={{ duration: 2.5, ease: 'easeOut' }} // Smooth transition effect
+                        >
+                            <img
+                                src={burgerbliss} // Replace with the actual restaurant image if available
+                                alt={item.name}
+                                className="h-[200px] w-full object-cover rounded-xl"
+                            />
+                            <div className="mt-2">
+                                <Link to={'#'}>
+                                    <h2 className="font-medium text-black text-xl hover:underline">{item.name}</h2>
+                                </Link>
+                                <div className="flex justify-start items-center mt-2">
+                                    <img src={star} alt="Star" width={14} height={14} />
+                                    <label className="text-gray-500 text-sm ml-2">{item.rating}</label>
+                                </div>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                    {item.cuisine.map((cuisine, index) => (
+                                        <span key={index} className="text-sm text-white px-2 py-1 bg-red-500 rounded-lg">
+                                            {cuisine}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+
+
+            {/* <div className="bg-[#A40C0C] py-16 px-5">
+                <h2 className='pl-9 pb-4'>Featured Restaurants</h2>
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center gap-5 px-5">
+                    {restaurants.map((item, index) => (
+                        <div key={index} className="p-4 rounded-lg bg-white flex flex-col items-start shadow-md">
+                            <img
+                                src={burgerbliss} // Replace with the actual restaurant image if available
+                                alt={item.name}
+                                className="h-[200px] w-full object-cover rounded-xl"
+                            />
+                            <div className='mt-2 '>
+                                <Link to={'#'}><h2 className='font-medium text-black text-xl'>{item.name}</h2></Link>
+                                <div className='flex justify-between items-center'>
+                                    <div className='flex items-center gap-2'>
+                                        <img src={star}
+                                            width={14}
+                                            height={14} />
+                                        <label className='text-gray-500 text-sm'>{item.rating}</label>
+                                        {item.cuisine.map((cusine, index) => (
+                                            <div key={index} className='text-sm text-white px-2 py-0 bg-red-500 rounded-lg'>{cusine}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div> */}
+
+
 
 
             <div className="container mx-auto">

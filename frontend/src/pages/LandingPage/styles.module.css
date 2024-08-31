@@ -3,13 +3,7 @@
     margin: auto;
 }
 
-.mission {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    background: #A40C0C;
-    padding: 100px;
-}
+
 
 @media (max-width: 768px) {
     .mission {
