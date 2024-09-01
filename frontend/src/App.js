@@ -7,7 +7,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Footer from './components/footer';
 import AllRestaurantsPage from './pages/AllRestaurantsPage';
 import ResetPassword from './components/resetPassword';
-// import RestaurantDetail from './pages/RestaurantDetail';
+import RestaurantDetail from './pages/RestaurantDetail';
 
 function App() {
   return (
@@ -47,7 +47,7 @@ function MainContent() {
         <Route path='/restaurants' element={<AllRestaurantsPage />} />
 
         {/* Restaurant Detail Page */}
-        {/* <Route path='/detail' element={<RestaurantDetail />} /> */}
+        <Route path='/detail' element={<RestaurantDetail />} />
 
         {/* Reset Password */}
         <Route path="/reset-password/:resetToken" element={<ResetPassword />} />

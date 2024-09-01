@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import burgerbliss from './assets/burger-bliss.png';
 import star from './assets/star.png';
 import { Link } from 'react-router-dom';
 import useRestaurantStore from '../../store/restaurant.store';
