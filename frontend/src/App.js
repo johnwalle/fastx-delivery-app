@@ -47,7 +47,7 @@ function MainContent() {
         <Route path='/restaurants' element={<AllRestaurantsPage />} />
 
         {/* Restaurant Detail Page */}
-        <Route path='/detail' element={<RestaurantDetail />} />
+        <Route path='/restaurant/:restID' element={<RestaurantDetail />} />
 
         {/* Reset Password */}
         <Route path="/reset-password/:resetToken" element={<ResetPassword />} />

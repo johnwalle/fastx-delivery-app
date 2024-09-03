@@ -36,9 +36,9 @@ const LandingPage = () => {
 
 
     const restaurants = [
-        { name: "The Spicy Spoon", rating: 4.5, cuisine: ["Indian", "Thai"] },
-        { name: "Pasta Paradise", rating: 4.7, cuisine: ["Italian", "Mediterranean"] },
-        { name: "Sushi Supreme", rating: 4.8, cuisine: ["Japanese"] },
+        { name: "The Spicy Spoon", rating: 4.5, cuisine: ["Indian", "Thai"], _id: "13245" },
+        { name: "Pasta Paradise", rating: 4.7, cuisine: ["Italian", "Mediterranean"], _id: "13246" },
+        { name: "Sushi Supreme", rating: 4.8, cuisine: ["Japanese"], _id: "13247" },
     ];
 
 
@@ -169,7 +169,7 @@ const LandingPage = () => {
                             className="p-4 rounded-lg bg-white flex flex-col items-start shadow-md"
                             whileInView={{ opacity: 1, scale: 1 }} // Animation when the card comes into view
                             initial={{ opacity: 0, scale: 0.95 }} // Initial state before it comes into view
-                            transition={{ duration: 2.5, ease: 'easeOut' }} // Smooth transition effect
+                            transition={{ duration: 1.6, ease: 'easeOut' }} // Smooth transition effect
                         >
                             <img
                                 src={burgerbliss} // Replace with the actual restaurant image if available
@@ -177,20 +177,23 @@ const LandingPage = () => {
                                 className="h-[200px] w-full object-cover rounded-xl"
                             />
                             <div className="mt-2">
-                                <Link to={'#'}>
+                                <a href={`restaurant/${item._id}`}>
                                     <h2 className="font-medium text-black text-xl hover:underline">{item.name}</h2>
-                                </Link>
-                                <div className="flex justify-start items-center mt-2">
-                                    <img src={star} alt="Star" width={14} height={14} />
-                                    <label className="text-gray-500 text-sm ml-2">{item.rating}</label>
+                                </a>
+                                <div className='flex'>
+                                    <div className="flex justify-start items-center mt-2">
+                                        <img src={star} alt="Star" width={14} height={14} />
+                                        <label className="text-gray-500 text-sm ml-2">{item.rating}</label>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1 px-6 mt-1">
+                                        {item.cuisine.map((cuisine, index) => (
+                                            <span key={index} className="text-sm text-white px-2 py-1 bg-blue-500 rounded-lg">
+                                                {cuisine}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                    {item.cuisine.map((cuisine, index) => (
-                                        <span key={index} className="text-sm text-white px-2 py-1 bg-red-500 rounded-lg">
-                                            {cuisine}
-                                        </span>
-                                    ))}
-                                </div>
+
                             </div>
                         </motion.div>
                     ))}

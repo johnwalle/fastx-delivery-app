@@ -164,7 +164,7 @@ function AllRestaurantsPage() {
                                         className="h-[130px] w-full object-cover rounded-xl"
                                     />
                                     <div className="mt-2">
-                                        <Link to={'/detail'}>
+                                        <Link to={`/restaurant/${item._id}`}>
                                             <h2 className="font-medium text-black line-clamp-1 text-xl">
                                                 {item.name}
                                             </h2>
@@ -178,7 +178,7 @@ function AllRestaurantsPage() {
                                                 {item.cuisine_types.map((cuisine, index) => (
                                                     <div
                                                         key={index}
-                                                        className="text-sm text-white px-2 py-0 bg-red-500 rounded-lg"
+                                                        className="text-sm text-white px-2 py-0 bg-blue-500 rounded-lg"
                                                     >
                                                         {cuisine}
                                                     </div>

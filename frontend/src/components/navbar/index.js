@@ -45,7 +45,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo and brand name */}
                     <div className="flex items-center">
-                        <NavLink to='/'>
+                        <a href='/'>
                             <div className="flex items-center justify-center">
                                 <img
                                     src={fastX_logo}
@@ -54,7 +54,7 @@ const Navbar = () => {
                                 />
                             </div>
 
-                        </NavLink>
+                        </a>
 
                         {/* Desktop navigation links */}
                         <div className="hidden md:block ml-5 relative">
@@ -68,13 +68,13 @@ const Navbar = () => {
                                 {showDropdown && (
                                     <div className="absolute left-[70px] mt-2 w-48 bg-white  shadow-3xl rounded-md">
                                         {restaurants.map(({ name, route }) => (
-                                            <Link
+                                            <a
                                                 key={route}
-                                                to={route}
+                                                href={`${route}`}
                                                 className="block text-sm px-4 py-2 text-red-500 hover:text-red-300"
                                             >
                                                 {name}
-                                            </Link>
+                                            </a>
                                         ))}
                                     </div>
                                 )}
