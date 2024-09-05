@@ -9,7 +9,7 @@ import AllRestaurantsPage from './pages/AllRestaurantsPage';
 import ResetPassword from './components/resetPassword';
 import RestaurantDetail from './pages/RestaurantDetail';
 import CreateRestaurantPage from './pages/CreateRestaurantPage';
-import CreateMenu from './components/createMenu';
+import CreateMenu from './pages/CreateMenuItems';
 
 function App() {
   return (
@@ -58,7 +58,7 @@ function MainContent() {
         <Route path='/create-restaurant' element={<CreateRestaurantPage />} />
 
         {/* Create Menu Page */}
-        <Route path='/create-menu/:restID' element={<CreateMenu />} />
+        <Route path='/create-menu' element={<CreateMenu />} />
 
       </Routes>
 

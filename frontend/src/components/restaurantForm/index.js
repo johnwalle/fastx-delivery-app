@@ -20,7 +20,7 @@ const RestaurantForm = () => {
             longitude: '',
         },
         working_days: [],
-        phone_number: '+251',
+        phone_number: '',
         image: null,
         operating_hours: {
             open: '',
