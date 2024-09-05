@@ -8,6 +8,8 @@ import Footer from './components/footer';
 import AllRestaurantsPage from './pages/AllRestaurantsPage';
 import ResetPassword from './components/resetPassword';
 import RestaurantDetail from './pages/RestaurantDetail';
+import CreateRestaurantPage from './pages/CreateRestaurantPage';
+import CreateMenu from './components/createMenu';
 
 function App() {
   return (
@@ -25,7 +27,7 @@ function MainContent() {
   const location = useLocation();
 
   // Use matchPath to determine if the current path matches the dynamic routes
-  const shouldHideFooter = ['/login', '/signup', '/forgot'].includes(location.pathname) ||
+  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant'].includes(location.pathname) ||
     matchPath('/reset-password/:resetToken', location.pathname);
 
   return (
@@ -51,6 +53,13 @@ function MainContent() {
 
         {/* Reset Password */}
         <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
+
+        {/* Create Restaurant Page */}
+        <Route path='/create-restaurant' element={<CreateRestaurantPage />} />
+
+        {/* Create Menu Page */}
+        <Route path='/create-menu/:restID' element={<CreateMenu />} />
+
       </Routes>
 
       {/* Conditionally render the Footer */}

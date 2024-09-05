@@ -1,27 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import burgerbliss from '../../pages/RestaurantDetail/assets/burger-bliss.png'; // Default image
 import star from '../../pages/RestaurantDetail/assets/star.png';
 import { Mail, MapPin, PhoneOutgoing } from 'lucide-react';
 import { IoLocationOutline } from "react-icons/io5";
 
-
 function Intro({ restaurant }) {
 
     const convertToMinutes = (time) => {
-        const [timePart, period] = time.split(' '); // Split time and am/pm
-        const [hours, minutes] = timePart.split(':').map(Number); // Split hours and minutes
-        let totalMinutes = hours * 60 + minutes;
-
-        // Adjust hours for pm times, except for 12 pm which is already correct
-        if (period.toLowerCase() === 'pm' && hours !== 12) {
-            totalMinutes += 12 * 60;
-        }
-        // Adjust for 12 am (midnight) which should be 0 minutes
-        if (period.toLowerCase() === 'am' && hours === 12) {
-            totalMinutes = minutes;
-        }
-        return totalMinutes;
+        const [hours, minutes] = time.split(':').map(Number); // Split hours and minutes
+        return hours * 60 + minutes;
     };
 
     // Function to check if the restaurant is currently open
@@ -38,8 +26,8 @@ function Intro({ restaurant }) {
     };
 
     // Extract opening and closing times from the restaurant data
-    const openingTime = restaurant?.operating_hours?.open || '06:00 am'; // Example default time
-    const closingTime = restaurant?.operating_hours?.close || '10:00 pm'; // Example default time
+    const openingTime = restaurant?.operating_hours?.open || '06:00'; // Example default time
+    const closingTime = restaurant?.operating_hours?.close || '22:00'; // Example default time
 
     // Determine if the restaurant is open
     const openStatus = isOpen(openingTime, closingTime);
@@ -57,7 +45,6 @@ function Intro({ restaurant }) {
         window.open(googleMapsUrl, '_blank');
     };
 
-    
     return (
         <div>
             <div className="relative">
