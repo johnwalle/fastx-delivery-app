@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import fastX_logo from '../../assets/fastX-logo.png';
-
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import { ShoppingCart } from 'lucide-react';
+import Cart from '../cart';
 const Navbar = () => {
     // State for mobile menu visibility and dropdown visibility
     const [showMenu, setShowMenu] = useState(false);
@@ -38,6 +41,19 @@ const Navbar = () => {
             {children}
         </Link>
     );
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     return (
         <nav className={navClassName}>
@@ -82,7 +98,7 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    <div className='flex'>
+                    <div className='flex items-center'>
                         {/* Mobile menu button */}
                         <div className="pl-6 md:hidden">
                             <button onClick={toggleMenu} className={`${textColorClass} mobile_btns px-3 mr-2 py-2 rounded-md text-sm font-medium ml-2`}>
@@ -97,7 +113,29 @@ const Navbar = () => {
                                 )}
                             </button>
                         </div>
-
+                        {/* Cart of items to be checkedout */}
+                        <div>
+                            <div className='flex gap-2 items-center cursor-pointer' onClick={handleClick}>
+                                <ShoppingCart className='text-white' />
+                                <label className='bg-slate-200 rounded-full p-1 px-3 cursor-pointer'>
+                                    {5}
+                                </label>
+                            </div>
+                            <Popover
+                                id={id}
+                                open={open}
+                                anchorEl={anchorEl}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Typography sx={{ p: 2 }}>
+                                    <Cart />
+                                </Typography>
+                            </Popover>
+                        </div>
                         {/* Desktop login and signup buttons */}
                         <div className="hidden md:block">
                             <div className="ml-4 flex items-center md:ml-6">
