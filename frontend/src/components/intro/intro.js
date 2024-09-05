@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom';
 import burgerbliss from '../../pages/RestaurantDetail/assets/burger-bliss.png'; // Default image
 import star from '../../pages/RestaurantDetail/assets/star.png';
 import { Mail, MapPin, PhoneOutgoing } from 'lucide-react';
+import { IoLocationOutline } from "react-icons/io5";
+
 
 function Intro({ restaurant }) {
-
-
 
     const convertToMinutes = (time) => {
         const [timePart, period] = time.split(' '); // Split time and am/pm
@@ -44,12 +44,23 @@ function Intro({ restaurant }) {
     // Determine if the restaurant is open
     const openStatus = isOpen(openingTime, closingTime);
 
+    // Function to handle View on Map click
+    const handleViewOnMapClick = () => {
+        // Extract latitude and longitude from the restaurant object, or set default coordinates
+        const latitude = restaurant?.location?.latitude || 9.019723; // Default latitude
+        const longitude = restaurant?.location?.longitude || 38.766883; // Default longitude
 
+        // Construct the Google Maps URL
+        const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
+        // Open the URL in a new tab
+        window.open(googleMapsUrl, '_blank');
+    };
 
+    
     return (
         <div>
-            <div>
+            <div className="relative">
                 {/* Display restaurant image if available; otherwise, use default image */}
                 <img
                     src={restaurant?.image || burgerbliss}
@@ -58,6 +69,15 @@ function Intro({ restaurant }) {
                     height={100}
                     className="w-full h-[220px] object-cover rounded-xl"
                 />
+
+                {/* View on Map text and icon */}
+                <div
+                    className="absolute top-2 right-2 flex items-center bg-white bg-opacity-75 p-1 rounded-full cursor-pointer"
+                    onClick={handleViewOnMapClick}
+                >
+                    <IoLocationOutline />
+                    <span className="text-sm text-gray-700">View on Map</span>
+                </div>
             </div>
 
             <div className="flex md:justify-between flex-col md:flex-row mb-4 md:mb-0 gap-5 md:gap-0">
