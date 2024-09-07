@@ -77,7 +77,7 @@ function Cart() {
                                 height={40}
                                 className="h-[40px] w-[40px] rounded-lg object-cover"
                             />
-                            <div className="text-sm text-black break-words">{item.ItemName}</div>
+                            <div className="text-sm text-black break-words w-1/2">{item.ItemName}</div>
                         </div>
                         <div className="text-black flex-shrink-0 text-right w-[50px]">
                             x{item.quantity}
