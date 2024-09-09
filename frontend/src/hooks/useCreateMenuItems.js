@@ -94,7 +94,7 @@ const useCreateMenuItems = () => {
                     variant="filled"
                     sx={{ width: '100%' }}
                 >
-                    {error ? error : 'Restaurant created successfully!'}
+                    {error ? error : 'Menu item created successfully!'}
                 </Alert>
             </Snackbar>
         ),
