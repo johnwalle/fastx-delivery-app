@@ -10,6 +10,7 @@ import ResetPassword from './components/resetPassword';
 import RestaurantDetail from './pages/RestaurantDetail';
 import CreateRestaurantPage from './pages/CreateRestaurantPage';
 import CreateMenu from './pages/CreateMenuItems';
+import CheckoutPage from './pages/CheckoutPage';
 
 function App() {
   return (
@@ -59,6 +60,9 @@ function MainContent() {
 
         {/* Create Menu Page */}
         <Route path='/create-menu' element={<CreateMenu />} />
+
+        {/* Checkout Page */}
+        <Route path='/checkout' element={<CheckoutPage />} />
 
       </Routes>
 
