@@ -46,9 +46,7 @@ function Cart() {
             <img width="70" height="70" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/50/external-empty-cart-web-store-flaticons-lineal-color-flat-icons-2.png" alt="external-empty-cart-web-store-flaticons-lineal-color-flat-icons-2" />
             <h2 class="text-2xl font-bold text-[#A40C0C] mt-4">Your Cart is Empty</h2>
             <p class="text-blue-600 text-sm mt-1">Looks like you haven't added anything to your cart yet. Start adding items to see them here!</p>
-        </div>
-
-            ;
+        </div>;
     }
 
     return (

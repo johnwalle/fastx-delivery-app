@@ -1,56 +1,42 @@
-import React from 'react'
+import { useState } from 'react';
 import MyOrder from '../../components/myOrder';
 import OrderNote from '../../components/orderNote';
 import Location from '../../components/location';
+import useCheckout from '../../hooks/useCheckout';
 
 function CheckoutPage() {
-    const cartItems = [
-        {
-            image: "https://example.com/images/burger.png",
-            name: "Cheeseburger",
-            price: 8.99,
-            quantity: 4
-        },
-        {
-            image: "https://example.com/images/pizza.png",
-            name: "Pepperoni Pizza",
-            price: 12.50,
-            quantity: 4
-        },
-        {
-            image: "https://example.com/images/sushi.png",
-            name: "California Roll",
-            price: 10.75,
-            quantity: 4
-        },
-        {
-            image: "https://example.com/images/pasta.png",
-            name: "Spaghetti Carbonara",
-            price: 14.00,
-            quantity: 4
-        },
-        {
-            image: "https://example.com/images/salad.png",
-            name: "Caesar Salad",
-            price: 7.50,
-            quantity: 4
-        },
-    ];
+    // State to hold the value of the text area in OrderNote
+    const [note, setNote] = useState('');
+
+    // Handler function to update the note value
+    const handleNoteChange = (value) => {
+        setNote(value);
+    };
+
+    // Custom hook to manage checkout process
+    const { checkout, isLoading, error } = useCheckout();
+
+    // Function to handle checkout button click
+    const handleCheckout = () => {
+        console.log('note:', note);
+        checkout(note); // Pass the note to the checkout function if needed
+    };
 
     return (
-        <div className='pl-80 pr-60 pt-24 pb-5'>
-            <div className='grid grid-cols-4 items-end gap-4'>
-                <div className='col-span-3'>
-                    <MyOrder cartItems={cartItems} />
-                </div>
-                <div className='col-span-1'>
-                    <OrderNote />
-                </div>
-            </div>
-            <div className='mt-14'>
+        <div className="pl-4 pr-4 pt-14 pb-5 lg:pl-80 lg:pr-60 lg:pt-24 lg:pb-5">
+            <div className="py-14">
                 <Location />
             </div>
-            <hr className='mt-7' />
+            <div className="grid md:grid-cols-4 items-end gap-4 grid-cols-1">
+                <div className="col-span-3">
+                    <MyOrder />
+                </div>
+                <div className="col-span-1">
+                    <OrderNote note={note} onNoteChange={handleNoteChange} />
+                </div>
+            </div>
+
+            <hr className="mt-7" />
             <div className="quick-tips p-5 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-3">Quick Tips</h2>
                 <ul className="list-disc pl-5 text-white">
@@ -68,12 +54,25 @@ function CheckoutPage() {
                     </li>
                 </ul>
             </div>
-            <div className='w-full mt-5'>
-                <button className='primary w-full'>Confirm your order</button>
+
+            {/* Error Display */}
+            {error && (
+                <div className="error-message text-red-500 mt-4">
+                    <p>Error: {error}</p>
+                </div>
+            )}
+
+            <div className="w-full mt-5">
+                <button
+                    className={`primary w-full ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    onClick={handleCheckout}
+                    disabled={isLoading} // Disable button when loading
+                >
+                    {isLoading ? 'Checking...' : 'Checkout and confirm your order'}
+                </button>
             </div>
         </div>
-
-    )
+    );
 }
 
-export default CheckoutPage
+export default CheckoutPage;
