@@ -11,6 +11,8 @@ import RestaurantDetail from './pages/RestaurantDetail';
 import CreateRestaurantPage from './pages/CreateRestaurantPage';
 import CreateMenu from './pages/CreateMenuItems';
 import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import UserDashboardPage from './pages/UserDashboardPage';
 
 function App() {
   return (
@@ -63,6 +65,12 @@ function MainContent() {
 
         {/* Checkout Page */}
         <Route path='/checkout' element={<CheckoutPage />} />
+
+        {/* Order Confirmation */}
+        <Route path='/confirm' element={<OrderConfirmationPage />} />
+
+        {/* User Dashboard */}
+        <Route path='/dashboard' element={<UserDashboardPage />} />
 
       </Routes>
 

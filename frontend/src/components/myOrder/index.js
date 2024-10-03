@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import burger from '../../pages/CheckoutPage/assets/burger.png'
 import cartStore from '../../store/cart.store'
 
-function MyOrder({ cartItems }) {
+function MyOrder() {
 
     const { cart } = cartStore((state) => ({
         cart: state.cart
