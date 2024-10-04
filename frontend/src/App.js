@@ -13,6 +13,7 @@ import CreateMenu from './pages/CreateMenuItems';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import UserDashboardPage from './pages/UserDashboardPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -71,6 +72,9 @@ function MainContent() {
 
         {/* User Dashboard */}
         <Route path='/dashboard' element={<UserDashboardPage />} />
+
+        {/* Admin Page */}
+        <Route path='/admin' element={<AdminPage />} />
 
       </Routes>
 
