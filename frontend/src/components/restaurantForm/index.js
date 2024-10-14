@@ -110,7 +110,7 @@ const RestaurantForm = () => {
 
         // Concatenate the country code with the phone number
         const fullPhoneNumber = `+251${formData.phone_number}`;
-        
+
 
         // Destructure formData to get individual values, update phone_number to fullPhoneNumber
         const {

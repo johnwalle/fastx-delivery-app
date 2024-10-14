@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, matchPath } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, matchPath } from 'react-router-dom'; // Import matchPath
 import Navbar from './components/navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -13,33 +13,30 @@ import CreateMenu from './pages/CreateMenuItems';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import UserDashboardPage from './pages/UserDashboardPage';
-// import AdminPage from './pages/AdminPage';
+import AdminPage from './pages/AdminPage';
+import UpdateMenuItems from './pages/UpdateMenuItems';
 
 function App() {
   return (
-    <Router>
-      <MainLayout />
-    </Router>
+    <div className="App">
+      <Router>
+        <Navbar />
+        <MainContent />
+      </Router>
+    </div>
   );
 }
 
-// Component to handle Navbar, Footer, and Main Content
-function MainLayout() {
-  const location = useLocation(); // Get the current route location
+// Component to handle conditional rendering of Footer
+function MainContent() {
+  const location = useLocation();
 
-  // Conditionally hide Navbar for specific routes
-  const shouldHideHeader = location.pathname === '/dashboard';
-
-  // Use matchPath to determine if the current path matches the dynamic routes for Footer
-  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant', "/dashboard"].includes(location.pathname) ||
+  // Use matchPath to determine if the current path matches the dynamic routes
+  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant', '/dashboard', '/admin'].includes(location.pathname) ||
     matchPath('/reset-password/:resetToken', location.pathname);
 
   return (
-    <div className="App">
-      {/* Conditionally render the Navbar */}
-      {!shouldHideHeader && <Navbar />}
-
-      {/* Main Content */}
+    <>
       <Routes>
         {/* Landing Page */}
         <Route path='/' element={<LandingPage />} />
@@ -68,6 +65,9 @@ function MainLayout() {
         {/* Create Menu Page */}
         <Route path='/create-menu' element={<CreateMenu />} />
 
+        {/* Update Menu Page */}
+        <Route path='/update-menu' element={<UpdateMenuItems />} />
+
         {/* Checkout Page */}
         <Route path='/checkout' element={<CheckoutPage />} />
 
@@ -78,12 +78,13 @@ function MainLayout() {
         <Route path='/dashboard' element={<UserDashboardPage />} />
 
         {/* Admin Page */}
-        {/* <Route path='/admin' element={<AdminPage />} /> */}
+        <Route path='/admin' element={<AdminPage />} />
+
       </Routes>
 
       {/* Conditionally render the Footer */}
       {!shouldHideFooter && <Footer />}
-    </div>
+    </>
   );
 }
 
