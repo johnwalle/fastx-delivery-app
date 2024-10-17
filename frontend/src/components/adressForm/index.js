@@ -15,7 +15,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="street"
                 value={address.street}
                 onChange={(e) => onAddressChange({ ...address, street: e.target.value })}
-                className="w-full px-3 py-2 border rounded-md mb-2 border-gray-300"
+                className="w-full text-gray-700  px-3 py-2 border rounded-md mb-2 border-gray-300"
             />
 
             <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="city">
@@ -28,7 +28,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="city"
                 value={address.city}
                 onChange={(e) => onAddressChange({ ...address, city: e.target.value })}
-                className="w-full px-3 py-2 border rounded-md mb-2 border-gray-300"
+                className="w-full text-gray-700  px-3 py-2 border rounded-md mb-2 border-gray-300"
             />
 
             <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="state">
@@ -41,7 +41,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="state"
                 value={address.state}
                 onChange={(e) => onAddressChange({ ...address, state: e.target.value })}
-                className="w-full px-3 py-2 border rounded-md mb-2 border-gray-300"
+                className="w-full text-gray-700  px-3 py-2 border rounded-md mb-2 border-gray-300"
             />
 
             <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="country">
@@ -54,7 +54,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="country"
                 value={address.country}
                 onChange={(e) => onAddressChange({ ...address, country: e.target.value })}
-                className="w-full px-3 py-2 border rounded-md mb-2 border-gray-300"
+                className="w-full text-gray-700  px-3 py-2 border rounded-md mb-2 border-gray-300"
                 disabled
             />
 
@@ -70,7 +70,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="latitude"
                 value={location.latitude}
                 onChange={(e) => onLocationChange({ ...location, latitude: e.target.value })}
-                className={`w-full px-3 py-2 border ${errors.latitude ? 'border-red-500' : 'border-gray-300'} rounded-md mb-2`}
+                className={`w-full text-gray-700  px-3 py-2 border ${errors.latitude ? 'border-red-500' : 'border-gray-300'} rounded-md mb-2`}
                 step="0.000001"
                 
             />
@@ -86,7 +86,7 @@ const AddressForm = ({ address, onAddressChange, location, onLocationChange, err
                 id="longitude"
                 value={location.longitude}
                 onChange={(e) => onLocationChange({ ...location, longitude: e.target.value })}
-                className={`w-full px-3 py-2 border ${errors.longitude ? 'border-red-500' : 'border-gray-300'} rounded-md mb-2`}
+                className={`w-full text-gray-700  px-3 py-2 border ${errors.longitude ? 'border-red-500' : 'border-gray-300'} rounded-md mb-2`}
                 step="0.000001"
                 
             />

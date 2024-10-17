@@ -1,11 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import useCreateRestaurant from '../../hooks/useCreateRestaurant';
 import AddressForm from '../adressForm';
+import authStore from '../../store/auth.store';
+import useAdminRestaurantStore from '../../admin/restaurant.store';
+import useUpdateRestaurant from '../../admin/hooks/useUpdateRestaurant';
 
 function UpdateRestaurantForm() {
+    const { userData } = authStore();
+    const token = userData?.tokens?.access?.token || null;
+
+    const { restaurantData, loading, fetchRestaurantData } = useAdminRestaurantStore();
+
+    console.log("restaurant dddddddddddddata", restaurantData)
     const [formData, setFormData] = useState({
         name: '',
-        email: '',
         cuisine_types: [],
         description: '',
         address: {
@@ -27,7 +35,9 @@ function UpdateRestaurantForm() {
         },
     });
 
+    const [imagePreview, setImagePreview] = useState(null);
     const [errors, setErrors] = useState({});
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -35,7 +45,6 @@ function UpdateRestaurantForm() {
             [name]: value,
         }));
 
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
@@ -44,11 +53,47 @@ function UpdateRestaurantForm() {
         }
     };
 
+    useEffect(() => {
+        fetchRestaurantData(token);
+    }, [token]);
+
+    useEffect(() => {
+        if (restaurantData) {
+            setFormData({
+                name: restaurantData.name,
+                cuisine_types: restaurantData.cuisine_types,
+                description: restaurantData.description,
+                address: {
+                    street: restaurantData.address.street,
+                    city: restaurantData.address.city,
+                    state: restaurantData.address.state,
+                    country: restaurantData.address.country,
+                },
+                location: {
+                    latitude: restaurantData.location.latitude,
+                    longitude: restaurantData.location.longitude,
+                },
+                working_days: restaurantData.working_days,
+                phone_number: restaurantData.phone_number.slice(4),
+                operating_hours: {
+                    open: restaurantData.operating_hours.open,
+                    close: restaurantData.operating_hours.close,
+                },
+            });
+            if (restaurantData.image) {
+                setImagePreview(restaurantData.image);
+            }
+        }
+    }, [restaurantData]);
+
     const handleFileChange = (e) => {
+        const file = e.target.files[0];
         setFormData((prevState) => ({
             ...prevState,
-            image: e.target.files[0],
+            image: file,
         }));
+        setImagePreview(URL.createObjectURL(file));
+
         if (errors.image) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
@@ -74,13 +119,9 @@ function UpdateRestaurantForm() {
     const validateStep = () => {
         const newErrors = {};
 
-        // Validation checks for required fields
         if (!formData.name.trim()) newErrors.name = 'Name is required';
-        if (!formData.email.trim()) newErrors.email = 'Email is required';
-        else if (!formData.email.includes('@')) newErrors.email = 'Invalid Email';
         if (!formData.phone_number.trim()) newErrors.phone_number = 'Phone number is required';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
-        if (!formData.image) newErrors.image = 'Restaurant image is required';
         if (!formData.location.latitude) newErrors.latitude = 'Latitude is required';
         if (!formData.location.longitude) newErrors.longitude = 'Longitude is required';
         if (!formData.operating_hours.open.trim()) newErrors.open = 'Opening hours are required';
@@ -88,49 +129,35 @@ function UpdateRestaurantForm() {
         if (formData.cuisine_types.length === 0) newErrors.cuisine_types = 'At least one cuisine type is required';
         if (formData.working_days.length === 0) newErrors.working_days = 'Select at least one working day';
 
-        // Set errors and return validation status
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
 
-    const {
-        createRestaurant,
-        isLoading,
-        SnackbarComponent
-    } = useCreateRestaurant();
+    console.log('fffforrrm data', formData)
+
+    const { updateRestaurant, isLoading, SnackbarComponent } = useUpdateRestaurant();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateStep()) return;
 
-        // Concatenate the country code with the phone number
         const fullPhoneNumber = `+251${formData.phone_number}`;
 
+        const { name, cuisine_types, description, address, working_days, operating_hours, location, image } = formData;
+        const restaurantID = restaurantData._id;
 
-        // Destructure formData to get individual values, update phone_number to fullPhoneNumber
-        const {
-            name,
-            email,
-            cuisine_types,
-            description,
-            address,
-            working_days,
-            operating_hours,
-            location,
-            image
-        } = formData;
-
+        
         try {
-            await createRestaurant({
+            await updateRestaurant({
+                restaurantID,
                 name,
-                email,
                 cuisine_types,
                 description,
                 address,
                 working_days,
-                phone_number: fullPhoneNumber, // Use fullPhoneNumber here
+                phone_number: fullPhoneNumber,
                 operating_hours,
                 location,
                 image,
@@ -140,13 +167,10 @@ function UpdateRestaurantForm() {
         }
     };
 
-
-
-
     const removeWorkingDay = (dayToRemove) => {
-        setFormData(prevState => ({
+        setFormData((prevState) => ({
             ...prevState,
-            working_days: prevState.working_days.filter(day => day !== dayToRemove)
+            working_days: prevState.working_days.filter((day) => day !== dayToRemove),
         }));
     };
 
@@ -164,6 +188,7 @@ function UpdateRestaurantForm() {
             }));
         }
     };
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -177,25 +202,9 @@ function UpdateRestaurantForm() {
                     id="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-700  p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.name && <p className="text-red-500 text-sm mb-2">{errors.name}</p>}
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="email">
-                    Email Address <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-600 mb-2">Enter a valid email address for restaurant contact. E.g., "info@sunsetbistro.com".</p>
-                <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full  p-2 border ${errors.email ? 'border-red-500' : 'border-gray-500'} rounded`}
-                />
-                {errors.email && <p className="text-red-500 text-sm mb-2">{errors.email}</p>}
             </div>
 
             <div className="mb-4">
@@ -214,7 +223,7 @@ function UpdateRestaurantForm() {
                             cuisine_types: e.target.value.split(',').map((type) => type.trim()),
                         }))
                     }
-                    className={`w-full  p-2 border ${errors.cuisine_types ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-700   p-2 border ${errors.cuisine_types ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.cuisine_types && <p className="text-red-500 text-sm mb-2">{errors.cuisine_types}</p>}
             </div>
@@ -229,7 +238,7 @@ function UpdateRestaurantForm() {
                     id="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className={`w-full  p-2 border ${errors.description ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-700  p-2 border ${errors.description ? 'border-red-500' : 'border-gray-500'} rounded`}
                     rows="4"
 
                 ></textarea>
@@ -255,7 +264,7 @@ function UpdateRestaurantForm() {
                     multiple
                     value={formData.working_days}
                     onChange={handleWorkingDaysChange}
-                    className={`w-full cursor-pointer p-2 border ${errors.working_days ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-700  cursor-pointer p-2 border ${errors.working_days ? 'border-red-500' : 'border-gray-500'} rounded`}
                 >
                     <option className="pb-2" value="Monday">Monday</option>
                     <option className="pb-2" value="Tuesday">Tuesday</option>
@@ -317,18 +326,23 @@ function UpdateRestaurantForm() {
                         name="phone_number" // Ensure this matches the field name in state
                         value={formData.phone_number} // Ensure this matches the field name in state
                         onChange={handleChange}
-                        className={`w-full p-2 border ${errors.phone_number ? 'border-red-500' : 'border-gray-500'} rounded-r-md`} // Changed border class for consistent styling
+                        className={`w-full text-gray-700  p-2 border ${errors.phone_number ? 'border-red-500' : 'border-gray-500'} rounded-r-md`} // Changed border class for consistent styling
                     />
                 </div>
                 {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
             </div>
 
-            {/* Restaurant Image Field */}
+            {/* Image preview */}
+            {imagePreview && (
+                <div className="mb-4 w-1/3">
+                    <img src={imagePreview} alt="Restaurant Preview" className="w-full h-auto rounded-md" />
+                </div>
+            )}
+
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="image">
                     Restaurant Image <span className="text-red-500">*</span>
                 </label>
-                <p className="text-xs text-gray-600 mb-2">Upload an image of your restaurant (e.g., exterior or interior view).</p>
                 <input
                     type="file"
                     name="image"
@@ -360,7 +374,7 @@ function UpdateRestaurantForm() {
                                 },
                             }))
                         }
-                        className={`w-full cursor-pointer md:w-1/4 p-2 border ${errors.open ? 'border-red-500' : 'border-gray-500'} rounded`}
+                        className={`w-full text-gray-600 cursor-pointer md:w-1/4 p-2 border ${errors.open ? 'border-red-500' : 'border-gray-500'} rounded`}
                     />
                     <input
                         type="time"
@@ -375,7 +389,7 @@ function UpdateRestaurantForm() {
                                 },
                             }))
                         }
-                        className={`w-full cursor-pointer md:w-1/4 p-2 border ${errors.close ? 'border-red-500' : 'border-gray-500'} rounded`}
+                        className={`w-full text-gray-600 cursor-pointer md:w-1/4 p-2 border ${errors.close ? 'border-red-500' : 'border-gray-500'} rounded`}
                     />
                 </div>
                 {(errors.open || errors.close) && (
@@ -383,32 +397,17 @@ function UpdateRestaurantForm() {
                 )}
             </div>
 
-            {/* Submit Button */}
             <button
                 type="submit"
                 className={`primary transition duration-300 flex items-center justify-center ${isLoading ? 'bg-gray-400' : 'bg-blue-500'} text-white p-2 rounded`}
                 disabled={isLoading}
             >
-                {isLoading ? (
-                    <svg
-                        className="animate-spin h-5 w-5 mr-3"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path d="M4 12a8 8 0 0 1 8-8v8h-8z" fill="currentColor" />
-                    </svg>
-                ) : null}
-                {isLoading ? 'Creating...' : 'Create Restaurant'}
+                {isLoading ? 'Saving...' : 'Save Changes'}
             </button>
+
             {SnackbarComponent}
         </form>
-    )
+    );
 }
 
-export default UpdateRestaurantForm
+export default UpdateRestaurantForm;

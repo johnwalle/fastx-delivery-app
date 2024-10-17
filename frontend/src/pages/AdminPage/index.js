@@ -1,7 +1,6 @@
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Box, createTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import React, { useState } from 'react'
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { ChartNoAxesGantt, ChevronDown, Pencil } from 'lucide-react';
+import { Accordion, AccordionDetails, AccordionSummary, Box, createTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { ChartNoAxesGantt, Pencil, ChevronDown } from 'lucide-react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import fastXLogo from '../../assets/fastX-logo.png';
@@ -10,22 +9,16 @@ import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import UpdateRestaurantForm from '../../components/updateRestaurantForm';
-
-
-
-
-
+import useAdminRestaurantStore from '../../admin/restaurant.store';
+import useAdminMenuStore from '../../admin/menu.store';
+import authStore from '../../store/auth.store';
+import axios from 'axios';
 
 const NAVIGATION = [
     {
         segment: 'overview',
         title: 'Overview',
         icon: <ChartNoAxesGantt />,
-    },
-    {
-        segment: 'orders',
-        title: 'Orders Managment',
-        icon: <ShoppingCartIcon />,
     },
     {
         segment: 'menu',
@@ -42,18 +35,18 @@ const NAVIGATION = [
 const customTheme = createTheme({
     palette: {
         background: {
-            default: '#F9F9FE', // Light background
-            paper: '#A40C0C',   // Paper color for light theme
+            default: '#F9F9FE',
+            paper: '#A40C0C',
         },
         text: {
-            primary: '#000000',  // Primary text color for light mode
-            secondary: '#555555', // Secondary text color for light mode
+            primary: '#000000',
+            secondary: '#555555',
         },
         action: {
-            active: '#ffffff',   // Default icon color (black for light mode)
-            hover: '#a72828',    // Icon color on hover (lighter gray)
-            selected: '#FF6347', // Icon color when selected (e.g., a red-orange like Tomato color)
-            disabled: '#BDBDBD', // Disabled icon color (gray)
+            active: '#ffffff',
+            hover: '#a72828',
+            selected: '#FF6347',
+            disabled: '#BDBDBD',
         },
     },
     breakpoints: {
@@ -67,105 +60,60 @@ const customTheme = createTheme({
     },
 });
 
-
 function DemoPageContent({ pathname }) {
-    const user = {
-        name: 'John Doe',
-        recentOrders: [
-            { restaurant: 'Pizza Palace', date: 'Sep 8, 2024', status: 'Delivered', orderId: '123456' },
-            { restaurant: 'Burger Town', date: 'Sep 7, 2024', status: 'Preparing', orderId: '123457' },
-            { restaurant: 'Sushi World', date: 'Sep 6, 2024', status: 'Canceled', orderId: '123458' },
-        ],
-        savedAddresses: [
-            { address: '123 Main St, Springfield, IL', label: 'Home' },
-            { address: '456 Oak Ave, Springfield, IL', label: 'Work' },
-        ],
-        accountDetails: {
-            email: 'johndoe@example.com',
-            phoneNumber: '123-456-7890',
-        },
+    const { restaurantData, fetchRestaurantData } = useAdminRestaurantStore((state) => ({
+        restaurantData: state.restaurantData,
+        fetchRestaurantData: state.fetchRestaurantData,
+    }));
+
+    const { menuItems, fetchAllMenuItems, loading, error, notFound } = useAdminMenuStore((state) => ({
+        menuItems: state.menuItems,
+        loading: state.loading,
+        error: state.error,
+        notFound: state.notFound,
+        fetchAllMenuItems: state.fetchAllMenuItems,
+    }));
+
+    const { userData } = authStore();
+    const token = userData?.tokens?.access?.token || null;
+
+    const [menuItemsState, setMenuItems] = useState(menuItems);
+
+    console.log("menuItemssssssssssss", menuItemsState);
+
+    // Fetch the restaurant data on component mount
+    useEffect(() => {
+        fetchRestaurantData(token);
+    }, [token, fetchRestaurantData]);
+
+    // Fetch menu items when navigating to the menu section
+    useEffect(() => {
+        if (pathname === '/menu') {
+            fetchAllMenuItems(token);
+        }
+    }, [pathname, token, fetchAllMenuItems]);
+
+    useEffect(() => {
+        setMenuItems(menuItems); // Sync local state with store state
+    }, [menuItems]);
+
+    const deleteMenuItem = async (menuItemId) => {
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/menu/delete/${menuItemId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                const updatedMenuItems = menuItemsState.filter((menu) => menu._id !== menuItemId);
+                setMenuItems(updatedMenuItems);
+                console.log('Menu item deleted successfully');
+            }
+        } catch (error) {
+            console.error('Error deleting menu item:', error);
+        }
     };
-
-    const orders = [
-        {
-            id: "001",
-            date: "2024-10-04",
-            items: [
-                { name: "Pizza", quantity: 2, price: 20 },
-                { name: "Pasta", quantity: 1, price: 15 },
-            ],
-            total: 55,
-        },
-        {
-            id: "002",
-            date: "2024-10-03",
-            items: [
-                { name: "Burger", quantity: 1, price: 10 },
-                { name: "Fries", quantity: 1, price: 5 },
-            ],
-            total: 15,
-        },
-    ];
-
-    const menuItems = [
-        {
-            id: 1,
-            name: "Margherita Pizza",
-            category: "Pizza",
-            price: 12.99,
-            description: "Classic pizza with tomato sauce, mozzarella, and fresh basil.",
-            available: true,
-        },
-        {
-            id: 2,
-            name: "BBQ Chicken Pizza",
-            category: "Pizza",
-            price: 14.99,
-            description: "Grilled chicken, BBQ sauce, red onions, and cilantro.",
-            available: true,
-        },
-        {
-            id: 3,
-            name: "Pepperoni Pizza",
-            category: "Pizza",
-            price: 13.99,
-            description: "Mozzarella, pepperoni, and marinara sauce on a hand-tossed crust.",
-            available: true,
-        },
-        {
-            id: 4,
-            name: "Spaghetti Bolognese",
-            category: "Pasta",
-            price: 11.99,
-            description: "Spaghetti with a rich meat sauce and Parmesan cheese.",
-            available: true,
-        },
-        {
-            id: 5,
-            name: "Fettuccine Alfredo",
-            category: "Pasta",
-            price: 12.49,
-            description: "Creamy Alfredo sauce served over fettuccine noodles with garlic bread.",
-            available: true,
-        },
-        {
-            id: 6,
-            name: "Caesar Salad",
-            category: "Salad",
-            price: 9.99,
-            description: "Romaine lettuce, croutons, Parmesan, and Caesar dressing.",
-            available: true,
-        },
-        {
-            id: 7,
-            name: "Greek Salad",
-            category: "Salad",
-            price: 8.99,
-            description: "Mixed greens, tomatoes, cucumbers, olives, feta cheese, and Greek dressing.",
-            available: true,
-        },
-    ];
-
 
     return (
         <Box sx={{ py: 4, px: 3 }}>
@@ -190,108 +138,64 @@ function DemoPageContent({ pathname }) {
                         </div>
                     </div>
                 </Typography>
-            ) : pathname === '/orders' ? (
-                <Typography>
-                    <div className='border rounded-lg'>
-                        {orders.map((order, index) => (
-                            <Accordion sx={{ color: 'white', backgroundColor: 'transparent', border: '1px solid white', border: 'none' }}>
-                                <AccordionSummary
-                                    expandIcon={<ChevronDown />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header">
-                                    Order {order.id} - Preparing
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <div className="bg-[#260904] p-4 text-white">
-                                        <h4 className="text-lg font-semibold mb-4">Items</h4>
-                                        <ul className="space-y-4">
-                                            {order.items.map((item, index) => (
-                                                <li key={index} className="bg-[#3b1f1b] p-4 rounded-lg shadow-md flex justify-between items-center">
-                                                    <div>
-                                                        <h5 className="text-md font-semibold">{item.name}</h5>
-                                                        <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
-                                                    </div>
-                                                    <p className="text-md font-semibold">${item.price}</p>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <div className="mt-6 flex justify-between">
-                                            <span className="font-semibold">Total:</span>
-                                            <span className="font-semibold">${order.total}</span>
-                                        </div>
-                                    </div>
-                                </AccordionDetails>
-                            </Accordion>
-                        ))}
-                        <Accordion sx={{ color: 'white', backgroundColor: 'transparent', border: '1px solid white', border: 'none' }}>
-                            <AccordionSummary
-                                expandIcon={<ChevronDown />}
-                                aria-controls="panel3-content"
-                                id="panel3-header"
-                            >
-                                Accordion Actions
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </AccordionDetails>
-                            <AccordionActions>
-                                <Button>Cancel</Button>
-                                <Button>Agree</Button>
-                            </AccordionActions>
-                        </Accordion>
-                    </div>
-                </Typography>
+            ) : pathname === '/menu' ? (
+                <div className="border rounded-lg">
+                    {loading ? (
+                        <p>Loading menu items...</p>
+                    ) : error ? (
+                        <p>Error loading menu items</p>
+                    ) : notFound ? (
+                        <p>No menu items found</p>
+                    ) : (
+                        <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ color: 'white' }}>Menu Items</TableCell>
+                                        <TableCell sx={{ color: 'white' }} align="right"></TableCell>
+                                        <TableCell sx={{ color: 'white' }} align="right"></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {menuItemsState.map((menu) => (
+                                        <TableRow
+                                            key={menu._id}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell sx={{ color: 'white' }} component="th" scope="row">
+                                                {menu.name}
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right">
+                                                <Link className="text-white" to={`/update-menu/${menu._id}`}>
+                                                    <button className="bg-green-500 py-0 round-md">Update</button>
+                                                </Link>
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right">
+                                                <button
+                                                    className="primary py-0"
+                                                    onClick={() => deleteMenuItem(menu._id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                </div>
             ) : pathname === '/profile' ? (
                 <Typography>
-                    <div className='pt-10 pb-7'>
+                    <div className="pt-10 pb-7">
                         <div className="max-w-3xl mx-auto p-6 py-10 bg-white shadow-md rounded-lg">
                             <h1 className="text-2xl text-[#A40C0C] tes font-bold mb-4">Restaurant Profile</h1>
                             <UpdateRestaurantForm />
                         </div>
                     </div>
                 </Typography>
-            ) : (
-                <div className='border rounded-lg'>
-                    <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ color: 'white' }}>Menu Items</TableCell>
-                                    <TableCell sx={{ color: 'white' }} align="right"></TableCell>
-                                    <TableCell sx={{ color: 'white' }} align="right"></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {menuItems.map((menu) => (
-                                    <TableRow
-                                        key={menu.name}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell sx={{ color: 'white' }} component="th" scope="row">
-                                            {menu.name}
-                                        </TableCell>
-                                        <TableCell sx={{ color: 'white' }} align="right">
-                                            <Link className='text-white' to={'/update-menu'}>
-                                                <button className='bg-green-500 py-0 round-md '>
-                                                    Update
-                                                </button>
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell sx={{ color: 'white' }} align="right">
-                                            <button className='primary py-0'>
-                                                Delete
-                                            </button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-            )
-            }
-        </Box >
+            ) : null}
+        </Box>
     );
 }
 
@@ -301,8 +205,7 @@ DemoPageContent.propTypes = {
 
 function DashboardLayoutBranding(props) {
     const { window } = props;
-
-    const [pathname, setPathname] = React.useState('/overview');
+    const [pathname, setPathname] = useState('/overview');
 
     const router = React.useMemo(() => {
         return {
@@ -318,17 +221,15 @@ function DashboardLayoutBranding(props) {
         <AppProvider
             navigation={NAVIGATION}
             branding={{
-                // Make the logo a clickable link to the landing page
                 logo: (
                     <a href="/" aria-label="Home">
                         <img src={fastXLogo} alt="MUI logo" />
                     </a>
                 ),
-                // Change the color of the title
                 title: <span className="text-white font-bold">fastX</span>,
             }}
             router={router}
-            theme={customTheme} // Single color background theme
+            theme={customTheme}
             window={demoWindow}
         >
             <DashboardLayout>

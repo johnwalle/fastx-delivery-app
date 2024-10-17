@@ -1,17 +1,58 @@
-import React, { useState } from 'react'
-import useCreateMenuItems from '../../hooks/useCreateMenuItems';
+import React, { useEffect, useState } from 'react';
+import useUpdateMenuItem from '../../admin/hooks/useUpdateMenu';
+import useAdminMenuStore from '../../admin/menu.store';
+import authStore from '../../store/auth.store';
+import Loader from '../loader/spinner.loader';
 
-function UpdateMenu() {
+function UpdateMenu({ menuItemId }) {
+    const { userData } = authStore();
+    const token = userData?.tokens?.access?.token || null;
+
+    const { fetchMenuItem, menuItem, loading } = useAdminMenuStore();
+
+    // State to hold the form data
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: '',
         category: '',
-        image: null, // Update to handle file uploads
-        restaurantEmail: '' // Change to restaurant email
+        image: null,
     });
 
+    // State to hold the image URL for preview
+    const [imagePreview, setImagePreview] = useState(null);
+
     const [errors, setErrors] = useState({});
+    const {
+        updateMenu,
+        isLoading,
+        SnackbarComponent
+    } = useUpdateMenuItem();
+
+    useEffect(() => {
+        fetchMenuItem(token, menuItemId);
+    }, [fetchMenuItem, menuItemId, token]);
+
+    // Update formData when menuItem is fetched
+    useEffect(() => {
+        if (menuItem) {
+            setFormData({
+                name: menuItem.name,
+                description: menuItem.description,
+                price: menuItem.price,
+                category: menuItem.category,
+                image: null, // You may want to handle existing image differently
+            });
+            // Set the image preview if available
+            if (menuItem.image) {
+                setImagePreview(menuItem.image); // Assuming menuItem.image holds the image URL
+            }
+        }
+    }, [menuItem]);
+
+    if (loading) {
+        return <Loader />;
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,11 +70,20 @@ function UpdateMenu() {
         }
     };
 
+
     const handleFileChange = (e) => {
+        const file = e.target.files[0];
         setFormData((prevState) => ({
             ...prevState,
-            image: e.target.files[0],
+            image: file,
         }));
+
+        // Update image preview
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImagePreview(imageUrl);
+        }
+
         if (errors.image) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
@@ -44,49 +94,29 @@ function UpdateMenu() {
 
     const validateStep = () => {
         const newErrors = {};
-
-        // Validation checks for required fields
         if (!formData.name.trim()) newErrors.name = 'Name is required';
-        if (!formData.restaurantEmail.trim()) newErrors.restaurantEmail = 'Email is required';
-        else if (!formData.restaurantEmail.includes('@')) newErrors.restaurantEmail = 'Invalid Email';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
-        if (!formData.price.trim()) newErrors.price = 'Price is required';
+        // if (!formData.price.trim()) newErrors.price = 'Price is required';
         if (!formData.category.trim()) newErrors.category = 'Category is required';
-        if (!formData.image) newErrors.image = 'Image is required';
-        // Set errors and return validation status
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-    const {
-        createMenu,
-        isLoading,
-        SnackbarComponent
-    } = useCreateMenuItems();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateStep()) return;
 
-        // Destructure formData to get individual values
-        const {
-            name,
-            description,
-            price,
-            category,
-            image,
-            restaurantEmail
-        } = formData;
-
+        const { name, description, price, category, image } = formData;
         try {
-            await createMenu({
+            await updateMenu(
+                menuItemId,
                 name,
                 description,
                 price,
                 category,
                 image,
-                restaurantEmail
-            });
+            );
         } catch (error) {
             console.error('Error creating menu item:', error);
         }
@@ -94,6 +124,9 @@ function UpdateMenu() {
 
     return (
         <form onSubmit={handleSubmit}>
+            {/* Image Preview */}
+
+
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="name">
                     Menu Item Name <span className="text-red-500">*</span>
@@ -103,6 +136,7 @@ function UpdateMenu() {
                     type="text"
                     name="name"
                     id="name"
+                    required
                     value={formData.name}
                     onChange={handleChange}
                     className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded`}
@@ -118,6 +152,7 @@ function UpdateMenu() {
                 <textarea
                     name="description"
                     id="description"
+                    required
                     value={formData.description}
                     onChange={handleChange}
                     className={`w-full p-2 border ${errors.description ? 'border-red-500' : 'border-gray-500'} rounded`}
@@ -132,6 +167,7 @@ function UpdateMenu() {
                 </label>
                 <p className="text-xs text-gray-600 mb-2">Enter the price of the menu item. E.g., "10.99".</p>
                 <input
+                    required
                     type="text"
                     name="price"
                     id="price"
@@ -149,6 +185,7 @@ function UpdateMenu() {
                 <p className="text-xs text-gray-600 mb-2">Enter the category of the menu item. E.g., "Burger".</p>
                 <input
                     type="text"
+                    required
                     name="category"
                     id="category"
                     value={formData.category}
@@ -159,8 +196,13 @@ function UpdateMenu() {
             </div>
 
             <div className="mb-4">
+                {imagePreview && (
+                    <div className="mb-4">
+                        <img src={imagePreview} alt="Menu Item Preview" className="w-1/3 h-auto mb-2 border rounded" />
+                    </div>
+                )}
                 <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="image">
-                    Menu Item Image <span className="text-red-500">*</span>
+                    Menu Item Image
                 </label>
                 <p className="text-xs text-gray-600 mb-2">Upload an image of the menu item.</p>
                 <input
@@ -171,22 +213,6 @@ function UpdateMenu() {
                     className={`w-full cursor-pointer p-2 border ${errors.image ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.image && <p className="text-red-500 text-sm mb-2">{errors.image}</p>}
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="restaurantEmail">
-                    Restaurant Email <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-600 mb-2">Enter a valid email address for restaurant contact. E.g., "info@sunsetbistro.com".</p>
-                <input
-                    type="email"
-                    name="restaurantEmail"
-                    id="restaurantEmail"
-                    value={formData.restaurantEmail}
-                    onChange={handleChange}
-                    className={`w-full p-2 border ${errors.restaurantEmail ? 'border-red-500' : 'border-gray-500'} rounded`}
-                />
-                {errors.restaurantEmail && <p className="text-red-500 text-sm mb-2">{errors.restaurantEmail}</p>}
             </div>
 
             <button
@@ -213,7 +239,7 @@ function UpdateMenu() {
             </button>
             {SnackbarComponent}
         </form>
-    )
+    );
 }
 
-export default UpdateMenu
+export default UpdateMenu;

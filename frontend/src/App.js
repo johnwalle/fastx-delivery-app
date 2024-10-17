@@ -66,13 +66,13 @@ function MainContent() {
         <Route path='/create-menu' element={<CreateMenu />} />
 
         {/* Update Menu Page */}
-        <Route path='/update-menu' element={<UpdateMenuItems />} />
+        <Route path='/update-menu/:menuItemId' element={<UpdateMenuItems />} />
 
         {/* Checkout Page */}
         <Route path='/checkout' element={<CheckoutPage />} />
 
         {/* Order Confirmation */}
-        <Route path='/confirm' element={<OrderConfirmationPage />} />
+        <Route path='/order/confirmation' element={<OrderConfirmationPage />} />
 
         {/* User Dashboard */}
         <Route path='/dashboard' element={<UserDashboardPage />} />
