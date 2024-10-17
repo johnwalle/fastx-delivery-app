@@ -1,15 +1,43 @@
-import React, { useState } from 'react'
-import useRegister from '../../hooks/useRegister';
+import React, { useEffect, useState } from 'react'
+import useUpdateP from '../../hooks/useUpdateP';
+import authStore from "../../store/auth.store";
+import userP from '../../store/user.store';
 
 function UserProfile() {
-    const { register, error, isLoading, SnackbarComponent } = useRegister();
+
+    const { update, error, isLoading, SnackbarComponent } = useUpdateP();
+
+    const { userData } = authStore();
+    const token = userData?.tokens?.access?.token;
+
+    const { getUserProfile, userProfile } = userP();
+
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         phoneNumber: '',
-        password: '',
-        confirmPassword: ''
     });
+
+    console.log('uuuuuuuuuuserrrrrr data', userProfile);
+
+    useEffect(() => {
+        getUserProfile(token);
+    }, []);
+
+
+    useEffect(() => {
+        if (userProfile) {
+            setFormData({
+                fullName: userProfile?.fullName,
+                email: userProfile?.email,
+                phoneNumber: userProfile?.phoneNumber?.slice(4),
+            });
+        }
+    }, [userProfile]);
+
+
+
+
 
     const [errors, setErrors] = useState({});
 
@@ -40,11 +68,21 @@ function UserProfile() {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+
+    const { fullName, email, phoneNumber } = formData;
+
+    const phoneNum = `+251${phoneNumber}`
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!validateStep()) return;
-        console.log('submitted')
+
+        update(fullName, email, phoneNum, token);
+
+
     }
     return (
         <form onSubmit={handleSubmit}>
@@ -56,7 +94,7 @@ function UserProfile() {
                     type="text"
                     name="fullName"
                     id="name"
-                    value={formData.name}
+                    value={formData.fullName}
                     onChange={handleChange}
                     className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded text-black`}
                 />

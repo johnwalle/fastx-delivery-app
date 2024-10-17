@@ -12,6 +12,9 @@ import { LogOut, MapPinHouse } from 'lucide-react';
 import fastXLogo from '../../assets/fastX-logo.png';
 import { Button, Popover } from '@mui/material';
 import UserProfile from '../../components/userProfile';
+import orderStore from '../../store/order.store';
+import { useEffect } from 'react';
+import authStore from '../../store/auth.store';
 
 
 const NAVIGATION = [
@@ -22,7 +25,7 @@ const NAVIGATION = [
   },
   {
     segment: 'orders',
-    title: 'Recent Orders',
+    title: 'My Orders',
     icon: <ShoppingCartIcon />,
   },
   {
@@ -69,30 +72,52 @@ const customTheme = createTheme({
 
 
 function DemoPageContent({ pathname }) {
-  const user = {
-    name: 'John Doe',
-    recentOrders: [
-      { restaurant: 'Pizza Palace', date: 'Sep 8, 2024', status: 'Delivered', orderId: '123456' },
-      { restaurant: 'Burger Town', date: 'Sep 7, 2024', status: 'Preparing', orderId: '123457' },
-      { restaurant: 'Sushi World', date: 'Sep 6, 2024', status: 'Canceled', orderId: '123458' },
-    ],
-    savedAddresses: [
-      { address: '123 Main St, Springfield, IL', label: 'Home' },
-      { address: '456 Oak Ave, Springfield, IL', label: 'Work' },
-    ],
-    accountDetails: {
-      email: 'johndoe@example.com',
-      phoneNumber: '123-456-7890',
-    },
-  };
+
+  const { userData } = authStore();
+  const token = userData?.tokens?.access?.token || null;
+
+  const { myOrders, getMyOrders } = orderStore();
+
+  useEffect(() => {
+    getMyOrders(token);
+  }, [getMyOrders, token]);
+
+  const [selectedOrder, setSelectedOrder] = React.useState(null)
+  console.log("selected order", selectedOrder)
+
+
+
+  // const user = {
+  //   name: 'John Doe',
+  //   recentOrders: [
+  //     { restaurant: 'Pizza Palace', date: 'Sep 8, 2024', status: 'Delivered', orderId: '123456' },
+  //     { restaurant: 'Burger Town', date: 'Sep 7, 2024', status: 'Preparing', orderId: '123457' },
+  //     { restaurant: 'Sushi World', date: 'Sep 6, 2024', status: 'Canceled', orderId: '123458' },
+  //   ],
+  //   savedAddresses: [
+  //     { address: '123 Main St, Springfield, IL', label: 'Home' },
+  //     { address: '456 Oak Ave, Springfield, IL', label: 'Work' },
+  //   ],
+  //   accountDetails: {
+  //     email: 'johndoe@example.com',
+  //     phoneNumber: '123-456-7890',
+  //   },
+  // };
+
+
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event) => {
+  const handleClick = (event, order) => {
+    console.log('ooooooooooooorder', order)
     setAnchorEl(event.currentTarget);
+    setSelectedOrder(order)
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setSelectedOrder(null)
+
   };
 
   const open = Boolean(anchorEl);
@@ -108,6 +133,16 @@ function DemoPageContent({ pathname }) {
     totalFee: 16.97
   };
 
+  const formatDateToReadable = (isoDateString) => {
+    const date = new Date(isoDateString);
+
+    // Define the options for formatting the date
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+
+    // Format the date to something like "Sep 8, 2024"
+    return date.toLocaleDateString('en-US', options);
+  };
+
 
   return (
     <Box sx={{ py: 4, px: 3 }}>
@@ -118,12 +153,12 @@ function DemoPageContent({ pathname }) {
       ) : pathname === '/orders' ? (
         <Typography>
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold">Recent Orders</h2>
+            <h2 className="text-2xl font-semibold">My Orders</h2>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {user.recentOrders.map((order, index) => (
+              {myOrders.map((order, index) => (
                 <div key={index} className="p-4 border border-gray-300 rounded-lg shadow-sm">
-                  <h3 className="text-lg font-semibold">{order.restaurant}</h3>
-                  <p className="text-gray-600">Date: {order.date}</p>
+                  <h3 className="text-lg font-semibold">{order.restaurantName}</h3>
+                  <p className="text-gray-600">Date: {formatDateToReadable(order.createdAt)}</p>
                   <p
                     className={`mt-1 ${order.status === 'Delivered'
                       ? 'text-green-500'
@@ -132,10 +167,14 @@ function DemoPageContent({ pathname }) {
                         : 'text-yellow-500'
                       }`}
                   >
-                    Status: {order.status}
+                    Status: {order.order_status}
                   </p>
                   <div className="mt-4 flex space-x-4">
-                    <Button aria-describedby={id} variant="contained" onClick={handleClick}>
+                    <Button
+                      aria-describedby={id}
+                      variant="contained"
+                      onClick={(event) => handleClick(event, order)} // Pass the order to handleClick
+                    >
                       View Details
                     </Button>
                     <Popover
@@ -148,26 +187,27 @@ function DemoPageContent({ pathname }) {
                         horizontal: 'left',
                       }}
                     >
-                      {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
-                      <div className="p-4 min-w-[250px] flex flex-col">
-                        <h3 className="text-lg font-bold mb-4">Order Details</h3>
-                        <div className="mb-4">
-                          {orders?.items?.map((item, index) => (
-                            <div key={index} className="flex justify-between py-2 text-white">
-                              <span className='text-white'>{item.name} X3</span>
-                              <span>{item.price} USD</span>
-                            </div>
-                          ))}
+                      {selectedOrder && ( // Display details of selected order
+                        <div className="p-4 min-w-[250px] flex flex-col">
+                          <h3 className="text-lg font-bold mb-4">Order Details</h3>
+                          <div className="mb-4">
+                            {selectedOrder.OrderItems.map((item, index) => (
+                              <div key={index} className="flex justify-between py-2 text-white">
+                                <span>{item.ItemName} X{item.quantity}</span>
+                                <span>{item.price} Birr</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="flex justify-between py-2 font-semibold text-white">
+                            <span>Delivery Fee:</span>
+                            <span>{selectedOrder.delivery_fee} Birr</span>
+                          </div>
+                          <div className="flex justify-between py-2 font-semibold text-white">
+                            <span>Total Price:</span>
+                            <span>{selectedOrder.total_amount} Birr</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between py-2 font-semibold text-white">
-                          <span>Delivery Fee:</span>
-                          <span>{orders.deliveryFee} USD</span>
-                        </div>
-                        <div className="flex justify-between py-2 font-semibold text-white">
-                          <span>Total Fee:</span>
-                          <span>{orders.totalFee} USD</span>
-                        </div>
-                      </div>
+                      )}
                     </Popover>
                     <button className="bg-green-500 text-white py-1 px-4 rounded-lg hover:bg-green-600">
                       Reorder
@@ -191,7 +231,7 @@ function DemoPageContent({ pathname }) {
         <div className="mb-8">
           <h2 className="text-2xl font-semibold">Saved Addresses</h2>
           <div className="mt-4">
-            {user.savedAddresses.map((address, index) => (
+            {/* {user?.savedAddresses.map((address, index) => (
               <div key={index} className="p-4 border border-gray-300 rounded-lg shadow-sm mb-4">
                 <h3 className="text-lg font-semibold">{address.label}</h3>
                 <p className="text-gray-600">{address.address}</p>
@@ -199,7 +239,7 @@ function DemoPageContent({ pathname }) {
                   Edit Address
                 </button>
               </div>
-            ))}
+            ))} */}
             <button className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600">
               Add New Address
             </button>
