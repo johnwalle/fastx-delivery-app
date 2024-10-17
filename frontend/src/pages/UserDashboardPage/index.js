@@ -8,8 +8,10 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { MapPinHouse } from 'lucide-react';
+import { LogOut, MapPinHouse } from 'lucide-react';
 import fastXLogo from '../../assets/fastX-logo.png';
+import { Button, Popover } from '@mui/material';
+import UserProfile from '../../components/userProfile';
 
 
 const NAVIGATION = [
@@ -37,33 +39,33 @@ const NAVIGATION = [
 
 // Simplified theme with one background color
 const customTheme = createTheme({
-    palette: {
-      background: {
-        default: '#F9F9FE', // Light background
-        paper: '#A40C0C',   // Paper color for light theme
-      },
-      text: {
-        primary: '#000000',  // Primary text color for light mode
-        secondary: '#555555', // Secondary text color for light mode
-      },
-      action: {
-        active: '#ffffff',   // Default icon color (black for light mode)
-        hover: '#a72828',    // Icon color on hover (lighter gray)
-        selected: '#FF6347', // Icon color when selected (e.g., a red-orange like Tomato color)
-        disabled: '#BDBDBD', // Disabled icon color (gray)
-      },
+  palette: {
+    background: {
+      default: '#F9F9FE', // Light background
+      paper: '#A40C0C',   // Paper color for light theme
     },
-    breakpoints: {
-      values: {
-        xs: 0,
-        sm: 600,
-        md: 600,
-        lg: 1200,
-        xl: 1536,
-      },
+    text: {
+      primary: '#000000',  // Primary text color for light mode
+      secondary: '#555555', // Secondary text color for light mode
     },
-  });
-  
+    action: {
+      active: '#ffffff',   // Default icon color (black for light mode)
+      hover: '#a72828',    // Icon color on hover (lighter gray)
+      selected: '#FF6347', // Icon color when selected (e.g., a red-orange like Tomato color)
+      disabled: '#BDBDBD', // Disabled icon color (gray)
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
+
 
 
 function DemoPageContent({ pathname }) {
@@ -83,6 +85,30 @@ function DemoPageContent({ pathname }) {
       phoneNumber: '123-456-7890',
     },
   };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const orders = {
+    items: [
+      { name: 'Burger', price: 8.99 },
+      { name: 'Fries', price: 3.49 },
+      { name: 'Coke', price: 1.99 }
+    ],
+    deliveryFee: 2.5,
+    totalFee: 16.97
+  };
+
+
   return (
     <Box sx={{ py: 4, px: 3 }}>
       {pathname === '/dashboard' ? (
@@ -99,20 +125,50 @@ function DemoPageContent({ pathname }) {
                   <h3 className="text-lg font-semibold">{order.restaurant}</h3>
                   <p className="text-gray-600">Date: {order.date}</p>
                   <p
-                    className={`mt-1 ${
-                      order.status === 'Delivered'
-                        ? 'text-green-500'
-                        : order.status === 'Canceled'
+                    className={`mt-1 ${order.status === 'Delivered'
+                      ? 'text-green-500'
+                      : order.status === 'Canceled'
                         ? 'text-red-500'
                         : 'text-yellow-500'
-                    }`}
+                      }`}
                   >
                     Status: {order.status}
                   </p>
                   <div className="mt-4 flex space-x-4">
-                    <button className="bg-blue-500 text-white py-1 px-4 rounded-lg hover:bg-blue-600">
+                    <Button aria-describedby={id} variant="contained" onClick={handleClick}>
                       View Details
-                    </button>
+                    </Button>
+                    <Popover
+                      id={id}
+                      open={open}
+                      anchorEl={anchorEl}
+                      onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                    >
+                      {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
+                      <div className="p-4 min-w-[250px] flex flex-col">
+                        <h3 className="text-lg font-bold mb-4">Order Details</h3>
+                        <div className="mb-4">
+                          {orders?.items?.map((item, index) => (
+                            <div key={index} className="flex justify-between py-2 text-white">
+                              <span className='text-white'>{item.name} X3</span>
+                              <span>{item.price} USD</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between py-2 font-semibold text-white">
+                          <span>Delivery Fee:</span>
+                          <span>{orders.deliveryFee} USD</span>
+                        </div>
+                        <div className="flex justify-between py-2 font-semibold text-white">
+                          <span>Total Fee:</span>
+                          <span>{orders.totalFee} USD</span>
+                        </div>
+                      </div>
+                    </Popover>
                     <button className="bg-green-500 text-white py-1 px-4 rounded-lg hover:bg-green-600">
                       Reorder
                     </button>
@@ -124,18 +180,10 @@ function DemoPageContent({ pathname }) {
         </Typography>
       ) : pathname === '/account' ? (
         <Typography>
-          <div>
-            <h2 className="text-2xl font-semibold">Account Details</h2>
-            <div className="mt-4 p-4 border border-gray-300 rounded-lg shadow-sm">
-              <p className="text-gray-600">
-                <strong>Email:</strong> {user.accountDetails.email}
-              </p>
-              <p className="text-gray-600 mt-2">
-                <strong>Phone Number:</strong> {user.accountDetails.phoneNumber}
-              </p>
-              <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 mt-4">
-                Edit Account Details
-              </button>
+          <div className='pt-10 pb-7'>
+            <div className="max-w-3xl mx-auto p-6 py-10 bg-white shadow-md rounded-lg">
+              <h1 className="text-2xl text-[#A40C0C] tes font-bold mb-4">Account Details</h1>
+              <UserProfile />
             </div>
           </div>
         </Typography>
@@ -198,7 +246,16 @@ function DashboardLayoutBranding(props) {
       theme={customTheme} // Single color background theme
       window={demoWindow}
     >
-      <DashboardLayout>
+      <DashboardLayout slotProps={{
+        toolbarAccount: {
+          localeText: {
+            signOutLabel: 'Logout'
+          },
+          slotProps: {
+            signInButton: <LogOut />
+          }
+        }
+      }}>
         <div>
           <DemoPageContent pathname={pathname} />
         </div>
