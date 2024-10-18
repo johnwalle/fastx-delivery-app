@@ -4,6 +4,7 @@ import { Rating, TextareaAutosize } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import useReviewStore from '../../store/review.store';
 
+
 function ReviewSection() {
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState();
@@ -24,6 +25,7 @@ function ReviewSection() {
 
     const handleSubmit = () => {
         console.log('Review Submitted');
+        console.log('Rating:', rating, 'Review:', reviewText);
     }
 
     return (
@@ -34,7 +36,7 @@ function ReviewSection() {
                     <Rating style={{ borderColor: 'white' }} name="simple-controlled"
                         value={rating} onChange={(e, newValue) => setRating(newValue)} className="mt-5 mb-2" />
                     {/* <Textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} /> */}
-                    < TextareaAutosize aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" className='w-full' />
+                    < TextareaAutosize aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" className='w-full'  onChange={(e) => setReviewText(e.target.value)}/>
                     <button disabled={rating == 0 || reviewText == ''}
                         className="mt-3 text-white primary"
                         type='submit'

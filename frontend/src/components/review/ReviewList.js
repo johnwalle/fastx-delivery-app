@@ -18,7 +18,7 @@ function ReviewList({ reviews }) {
     return (
         <div className='flex flex-col gap-5 my-3 mr-3'>
             {!reviews ?
-                [0, 1, 2, 3].map((item, index) => (
+                [0, 1, 2].map((item, index) => (
                     <div key={index} className='h-[100px] w-full border rounded-lg bg-slate-200 animate-pulse'>
                     </div>
                 )) :
