@@ -87,25 +87,6 @@ function DemoPageContent({ pathname }) {
 
 
 
-  // const user = {
-  //   name: 'John Doe',
-  //   recentOrders: [
-  //     { restaurant: 'Pizza Palace', date: 'Sep 8, 2024', status: 'Delivered', orderId: '123456' },
-  //     { restaurant: 'Burger Town', date: 'Sep 7, 2024', status: 'Preparing', orderId: '123457' },
-  //     { restaurant: 'Sushi World', date: 'Sep 6, 2024', status: 'Canceled', orderId: '123458' },
-  //   ],
-  //   savedAddresses: [
-  //     { address: '123 Main St, Springfield, IL', label: 'Home' },
-  //     { address: '456 Oak Ave, Springfield, IL', label: 'Work' },
-  //   ],
-  //   accountDetails: {
-  //     email: 'johndoe@example.com',
-  //     phoneNumber: '123-456-7890',
-  //   },
-  // };
-
-
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event, order) => {
@@ -122,16 +103,6 @@ function DemoPageContent({ pathname }) {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
-  const orders = {
-    items: [
-      { name: 'Burger', price: 8.99 },
-      { name: 'Fries', price: 3.49 },
-      { name: 'Coke', price: 1.99 }
-    ],
-    deliveryFee: 2.5,
-    totalFee: 16.97
-  };
 
   const formatDateToReadable = (isoDateString) => {
     const date = new Date(isoDateString);
