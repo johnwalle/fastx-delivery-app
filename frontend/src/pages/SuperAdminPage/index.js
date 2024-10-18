@@ -55,6 +55,27 @@ const customTheme = createTheme({
 });
 
 function DemoPageContent({ pathname }) {
+    const orders = [
+        {
+            id: "001",
+            date: "2024-10-04",
+            items: [
+                { name: "Pizza", quantity: 2, price: 20 },
+                { name: "Pasta", quantity: 1, price: 15 },
+            ],
+            total: 55,
+        },
+        {
+            id: "002",
+            date: "2024-10-03",
+            items: [
+                { name: "Burger", quantity: 1, price: 10 },
+                { name: "Fries", quantity: 1, price: 5 },
+            ],
+            total: 15,
+        },
+    ];
+
     return (
         <Box
             sx={{
@@ -63,8 +84,43 @@ function DemoPageContent({ pathname }) {
         >
             {pathname === '/order' ?
                 <Typography>
-                    <div>
-                        <Accordion>
+                    <div className='border rounded-lg'>
+                        {orders.map((order, index) => (
+                            <Box>
+                                <Accordion sx={{
+                                    backgroundColor: 'transparent',
+                                    color: 'white'
+                                }} key={index}>
+                                    <AccordionSummary
+                                        expandIcon={<ChevronDown />}
+                                        aria-controls='panel-content'
+                                        id={order.id}>
+                                        Order #{order.id}
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <div className="bg-[#260904] p-4 text-white">
+                                            <h4 className="text-lg font-semibold mb-4">Items</h4>
+                                            <ul className="space-y-4">
+                                                {order.items.map((item, index) => (
+                                                    <li key={index} className="bg-[#3b1f1b] p-4 rounded-lg shadow-md flex justify-between items-center">
+                                                        <div>
+                                                            <h5 className="text-md font-semibold">{item.name}</h5>
+                                                            <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
+                                                        </div>
+                                                        <p className="text-md font-semibold">${item.price}</p>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="mt-6 flex justify-between">
+                                                <span className="font-semibold">Total:</span>
+                                                <span className="font-semibold">${order.total}</span>
+                                            </div>
+                                        </div>
+                                    </AccordionDetails>
+                                </Accordion>
+                            </Box>
+                        ))}
+                        {/* <Accordion>
                             <AccordionSummary
                                 expandIcon={<ChevronDown />}
                                 aria-controls="panel1-content"
@@ -106,7 +162,7 @@ function DemoPageContent({ pathname }) {
                                 <Button>Cancel</Button>
                                 <Button>Agree</Button>
                             </AccordionActions>
-                        </Accordion>
+                        </Accordion> */}
                     </div>
                 </Typography> :
                 <Typography>
