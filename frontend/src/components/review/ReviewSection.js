@@ -3,6 +3,7 @@ import ReviewList from './ReviewList';
 import { Rating, TextareaAutosize } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import useReviewStore from '../../store/review.store';
+import authStore from '../../store/auth.store';
 
 
 function ReviewSection() {
@@ -15,6 +16,13 @@ function ReviewSection() {
         reviews: state.reviews,
     }));
 
+    const { userData } = authStore((state) => ({
+        userData: state.userData,
+    }));
+
+    const token = userData?.tokens?.access?.token;
+
+
 
     useEffect(() => {
         fetchReviews(restID);
@@ -23,9 +31,10 @@ function ReviewSection() {
 
 
 
-    const handleSubmit = () => {
-        console.log('Review Submitted');
-        console.log('Rating:', rating, 'Review:', reviewText);
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevents the default form submission behavior
+        
+        addReview({ rating, comment: reviewText, restID, token });
     }
 
     return (
@@ -36,7 +45,7 @@ function ReviewSection() {
                     <Rating style={{ borderColor: 'white' }} name="simple-controlled"
                         value={rating} onChange={(e, newValue) => setRating(newValue)} className="mt-5 mb-2" />
                     {/* <Textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} /> */}
-                    < TextareaAutosize aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" className='w-full'  onChange={(e) => setReviewText(e.target.value)}/>
+                    < TextareaAutosize aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" className='w-full' onChange={(e) => setReviewText(e.target.value)} />
                     <button disabled={rating == 0 || reviewText == ''}
                         className="mt-3 text-white primary"
                         type='submit'

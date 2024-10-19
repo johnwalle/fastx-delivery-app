@@ -16,7 +16,7 @@ const useReviewStore = create((set) => ({
             // Fetch reviews from the API
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews/restaurant/${restaurantID}`);
             console.log("reviews-list", response.data);
-          
+
             if (response.status === 200) {
                 set({ reviews: response.data, loading: false, error: null });
             }
@@ -27,15 +27,23 @@ const useReviewStore = create((set) => ({
     },
 
     // Action to add a new review
-    addReview: async (newReview) => {
+    addReview: async ({ rating, comment, restID, token }) => {
+
+        console.log("rating", rating, "comment", comment, "restID", restID, "token", token);
         set({ loading: true, error: null });
 
         try {
             // Post new review to the API
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/reviews`, newReview);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/reviews/create/${restID}`, {
+                rating, comment
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (response.status === 201) {
                 // Update reviews in the state with the new review added
-                set((state) => ({ reviews: [...state.reviews, response.data], loading: false, error: null }));
+                set((state) => ({ reviews: [...state.reviews, response.data.data], loading: false, error: null }));
             }
         } catch (error) {
             console.error('Error adding review:', error);
