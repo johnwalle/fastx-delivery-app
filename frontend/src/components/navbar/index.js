@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { ShoppingCart } from 'lucide-react';
 import authStore from '../../store/auth.store';
 import cartStore from '../../store/cart.store';
+import useRestaurantStore from '../../store/restaurant.store';
 
 import Cart from '../cart';
 
@@ -19,16 +20,18 @@ const Navbar = () => {
     const toggleMenu = () => setShowMenu(!showMenu);
 
     // Sample restaurant data
-    const restaurants = [
-        { name: 'Restaurant 1', route: '/restaurant/1' },
-        { name: 'Restaurant 2', route: '/restaurant/2' },
-        { name: 'Restaurant 3', route: '/restaurant/3' },
-        { name: 'Restaurant 4', route: '/restaurant/4' },
-        { name: 'All Restaurants', route: '/restaurants' },
-        // Add more restaurants as needed
-    ];
+    const { restaurants, fetchRestaurants } = useRestaurantStore();
 
-    // Common styles
+    useEffect(() => {
+        fetchRestaurants();
+    }, [fetchRestaurants]);
+
+    // Function to get the top 5 restaurants by rating
+    const topRestaurants = restaurants
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 5);
+
+    // Navbar styles
     const navClassName = 'fixed py-2 z-30 w-full bg-[#A40C0C]';
     const textColorClass = 'text-white';
     const linkStyle = {
@@ -47,39 +50,27 @@ const Navbar = () => {
         </Link>
     );
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClick = (event) => setAnchorEl(event.currentTarget);
+    const handleClose = () => setAnchorEl(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
-    // Navbar.js
 
-
+    // Get user data from auth store
     const userData = authStore((state) => state.userData);
-    const { getCartItemCount, cart , getCart} = cartStore();
+    const userRole = userData?.user?.role; // Assuming 'role' is available in userData
+
+    // Cart logic
+    const { getCartItemCount, cart, getCart } = cartStore();
     const cartLength = cart.items.length;
-    
+
     useEffect(() => {
         if (userData) {
             getCart(userData.tokens.access.token);
         }
     }, [userData, getCart]);
 
-            
-
-    console.log('cartwdg', cart)
-    console.log('cartLength', cartLength)
     const cartItemCount = getCartItemCount();
-
-
 
     return (
         <nav className={navClassName}>
@@ -88,13 +79,11 @@ const Navbar = () => {
                     {/* Logo and brand name */}
                     <div className="flex items-center">
                         <a href="/">
-                            <div className="flex items-center justify-center">
-                                <img
-                                    src={fastX_logo}
-                                    alt="fastX logoX"
-                                    className="w-32 h-auto md:w-40 md:h-auto lg:h-auto"
-                                />
-                            </div>
+                            <img
+                                src={fastX_logo}
+                                alt="fastX logoX"
+                                className="w-32 h-auto md:w-40"
+                            />
                         </a>
 
                         {/* Desktop navigation links */}
@@ -104,19 +93,25 @@ const Navbar = () => {
                                 onMouseEnter={() => setShowDropdown(true)}
                                 onMouseLeave={() => setShowDropdown(false)}
                             >
-                                <NavLink to="/restaurants">Restaurants</NavLink>
+                                <NavLink>Restaurants</NavLink>
                                 {/* Dropdown Menu */}
                                 {showDropdown && (
                                     <div className="absolute left-[70px] mt-2 w-48 bg-white shadow-3xl rounded-md">
-                                        {restaurants.map(({ name, route }) => (
+                                        {topRestaurants.map((restaurant) => (
                                             <Link
-                                                key={route}
-                                                to={route}
-                                                className="block text-sm px-4 py-2 text-red-500 hover:text-red-300"
+                                                key={restaurant._id}
+                                                to={`restaurant/${restaurant._id}`}
+                                                className="block line-clamp-1 text-sm px-4 py-2 text-red-500 hover:text-red-300"
                                             >
-                                                {name}
+                                                {restaurant.name}
                                             </Link>
                                         ))}
+                                        <Link
+                                            to="/restaurants"
+                                            className="block text-sm px-4 py-2 text-blue-500 hover:text-blue-300 mt-2 border-t border-gray-200"
+                                        >
+                                            All Restaurants
+                                        </Link>
                                     </div>
                                 )}
                             </div>
@@ -162,21 +157,17 @@ const Navbar = () => {
                             </button>
                         </div>
 
-
-                        {/* Conditional rendering based on user authentication */}
+                        {/* Links based on user authentication */}
                         {userData ? (
-                            // Links for logged-in users
-
-                            <div className='flex '>
+                            <div className="flex">
                                 <div>
-                                    <div className='flex gap-2 items-center cursor-pointer' onClick={handleClick}>
-                                        <ShoppingCart className='text-white' />
+                                    <div className="flex gap-2 items-center cursor-pointer" onClick={handleClick}>
+                                        <ShoppingCart className="text-white" />
                                         {(cartItemCount > 0 || cartLength > 0) && (
-                                            <label className='bg-slate-200 rounded-full p-1 px-3 cursor-pointer'>
+                                            <label className="bg-slate-200 rounded-full p-1 px-3 cursor-pointer">
                                                 {cartItemCount || cartLength}
                                             </label>
                                         )}
-
                                     </div>
                                     <Popover
                                         id={id}
@@ -196,14 +187,23 @@ const Navbar = () => {
 
                                 <div className="hidden md:block">
                                     <div className="ml-4 flex items-center md:ml-6">
-                                        <NavLink to="/dashboard">Dashboard</NavLink>
+                                        {!(userRole === 'admin' || userRole === 'super-admin') && (
+                                            <button onClick={() => setShowMenu(false)}>
+                                                <NavLink to="/dashboard">Dashboard</NavLink>
+                                            </button>
+                                        )}
+
+                                        {/* Conditional Admin/Super Admin Links */}
+                                        {userRole === 'admin' && (
+                                            <NavLink to="/admin">Admin</NavLink>
+                                        )}
+                                        {userRole === 'super-admin' && (
+                                            <NavLink to="/super-admin">Super Admin</NavLink>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-
-
                         ) : (
-                            // Links for unauthorized users
                             <div className="hidden md:block">
                                 <div className="ml-4 flex items-center md:ml-6">
                                     <NavLink to="/login">Login</NavLink>
@@ -228,14 +228,31 @@ const Navbar = () => {
             <div className={`md:hidden ${showMenu ? 'block' : 'hidden'}`}>
                 <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     {userData ? (
-                        // Links for logged-in users in mobile menu
                         <>
                             <button onClick={() => setShowMenu(false)}>
-                                <NavLink to="/dashboard">Dashboard</NavLink>
+                                <NavLink to="/restaurants">Restaurants</NavLink>
                             </button>
+                            {!(userRole === 'admin' || userRole === 'super-admin') && (
+                                <button onClick={() => setShowMenu(false)}>
+                                    <NavLink to="/dashboard">Dashboard</NavLink>
+                                </button>
+                            )}
+
+
+
+                            {/* Conditional Admin/Super Admin Links */}
+                            {userRole === 'admin' && (
+                                <button onClick={() => setShowMenu(false)}>
+                                    <NavLink to="/admin">Admin</NavLink>
+                                </button>
+                            )}
+                            {userRole === 'super-admin' && (
+                                <button onClick={() => setShowMenu(false)}>
+                                    <NavLink to="/super-admin">Super Admin</NavLink>
+                                </button>
+                            )}
                         </>
                     ) : (
-                        // Links for unauthorized users in mobile menu
                         <>
                             <button onClick={() => setShowMenu(false)}>
                                 <NavLink to="/restaurants">Restaurants</NavLink>

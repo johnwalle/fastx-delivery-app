@@ -126,7 +126,7 @@ function DemoPageContent({ pathname }) {
           <div className="mb-8">
             <h2 className="text-2xl font-semibold">My Orders</h2>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {myOrders.map((order, index) => (
+              {myOrders?.map((order, index) => (
                 <div key={index} className="p-4 border border-gray-300 rounded-lg shadow-sm">
                   <h3 className="text-lg font-semibold">{order.restaurantName}</h3>
                   <p className="text-gray-600">Date: {formatDateToReadable(order.createdAt)}</p>

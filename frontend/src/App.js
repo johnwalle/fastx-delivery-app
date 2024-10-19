@@ -17,6 +17,7 @@ import AdminPage from './pages/AdminPage';
 import SuperAdminPage from './pages/SuperAdminPage'
 import UpdateMenuItems from './pages/UpdateMenuItems';
 import { Superscript } from 'lucide-react';
+import authStore from './store/auth.store';
 
 function App() {
   return (
@@ -32,9 +33,13 @@ function App() {
 // Component to handle conditional rendering of Footer
 function MainContent() {
   const location = useLocation();
+  const { userData } = authStore();
+
+  const isAdmin = userData && userData.user.role === 'admin';
+  const isSuperAdmin = userData && userData.user.role === 'super-admin';
 
   // Use matchPath to determine if the current path matches the dynamic routes
-  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant', '/dashboard', '/admin', '/super-admin'].includes(location.pathname) ||
+  const shouldHideFooter = ['/signup', '/forgot', '/create-restaurant', '/dashboard', '/admin', '/super-admin'].includes(location.pathname) ||
     matchPath('/reset-password/:resetToken', location.pathname);
 
   return (
@@ -44,13 +49,13 @@ function MainContent() {
         <Route path='/' element={<LandingPage />} />
 
         {/* Login Page */}
-        <Route path='/login' element={<LoginPage />} />
+        <Route path='/login' element={!userData ? <LoginPage /> : <LandingPage />} />
 
         {/* Signup Page */}
-        <Route path='/signup' element={<SignupPage />} />
+        <Route path='/signup' element={!userData ? <SignupPage /> : <LandingPage />} />
 
         {/* Forgot Password Page */}
-        <Route path='/forgot' element={<ForgotPasswordPage />} />
+        <Route path='/forgot' element={!userData ? <ForgotPasswordPage /> : <LandingPage />} />
 
         {/* All Restaurants Page */}
         <Route path='/restaurants' element={<AllRestaurantsPage />} />
@@ -59,16 +64,16 @@ function MainContent() {
         <Route path='/restaurant/:restID' element={<RestaurantDetail />} />
 
         {/* Reset Password */}
-        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
+        <Route path="/reset-password/:resetToken" element={!userData ? <ResetPassword /> : <LandingPage />} />
 
         {/* Create Restaurant Page */}
-        <Route path='/create-restaurant' element={<CreateRestaurantPage />} />
+        {/* <Route path='/create-restaurant' element={<CreateRestaurantPage />} /> */}
 
         {/* Create Menu Page */}
         <Route path='/create-menu' element={<CreateMenu />} />
 
         {/* Update Menu Page */}
-        <Route path='/update-menu/:menuItemId' element={<UpdateMenuItems />} />
+        <Route path='/update-menu/:menuItemId' element={isAdmin ? <UpdateMenuItems /> : <LandingPage />} />
 
         {/* Checkout Page */}
         <Route path='/checkout' element={<CheckoutPage />} />
@@ -80,10 +85,10 @@ function MainContent() {
         <Route path='/dashboard' element={<UserDashboardPage />} />
 
         {/* Admin Page */}
-        <Route path='/admin' element={<AdminPage />} />
+        <Route path='/admin' element={isAdmin ? <AdminPage /> : <LandingPage />} />
 
         {/* SuperAdmin Page */}
-        <Route path='/super-admin' element={<SuperAdminPage />} />
+        <Route path='/super-admin' element={isSuperAdmin ? <SuperAdminPage /> : <LandingPage />} />
 
       </Routes>
 

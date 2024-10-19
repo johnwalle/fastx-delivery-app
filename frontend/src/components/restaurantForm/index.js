@@ -181,7 +181,7 @@ const RestaurantForm = () => {
                     id="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600 p-2 border ${errors.name ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.name && <p className="text-red-500 text-sm mb-2">{errors.name}</p>}
             </div>
@@ -197,7 +197,7 @@ const RestaurantForm = () => {
                     id="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full  p-2 border ${errors.email ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600  p-2 border ${errors.email ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.email && <p className="text-red-500 text-sm mb-2">{errors.email}</p>}
             </div>
@@ -218,7 +218,7 @@ const RestaurantForm = () => {
                             cuisine_types: e.target.value.split(',').map((type) => type.trim()),
                         }))
                     }
-                    className={`w-full  p-2 border ${errors.cuisine_types ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600  p-2 border ${errors.cuisine_types ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.cuisine_types && <p className="text-red-500 text-sm mb-2">{errors.cuisine_types}</p>}
             </div>
@@ -233,7 +233,7 @@ const RestaurantForm = () => {
                     id="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className={`w-full  p-2 border ${errors.description ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600  p-2 border ${errors.description ? 'border-red-500' : 'border-gray-500'} rounded`}
                     rows="4"
 
                 ></textarea>
@@ -259,7 +259,7 @@ const RestaurantForm = () => {
                     multiple
                     value={formData.working_days}
                     onChange={handleWorkingDaysChange}
-                    className={`w-full cursor-pointer p-2 border ${errors.working_days ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600 cursor-pointer p-2 border ${errors.working_days ? 'border-red-500' : 'border-gray-500'} rounded`}
                 >
                     <option className="pb-2" value="Monday">Monday</option>
                     <option className="pb-2" value="Tuesday">Tuesday</option>
@@ -314,14 +314,14 @@ const RestaurantForm = () => {
                 <p className="text-xs text-gray-600 mb-2">Example: "+251 911 123 456"</p>
 
                 <div className="flex items-center">
-                    <div className="border border-gray-300 rounded-l-md bg-gray-200 text-center w-20 py-2">+251</div>
+                    <div className="border border-gray-300 rounded-l-md bg-gray-200 text-gray-600 text-center w-20 py-2">+251</div>
                     <input
                         type="tel"
                         id="phone_number" // Updated id to match the name
                         name="phone_number" // Ensure this matches the field name in state
                         value={formData.phone_number} // Ensure this matches the field name in state
                         onChange={handleChange}
-                        className={`w-full p-2 border ${errors.phone_number ? 'border-red-500' : 'border-gray-500'} rounded-r-md`} // Changed border class for consistent styling
+                        className={`w-full text-gray-600 p-2 border ${errors.phone_number ? 'border-red-500' : 'border-gray-500'} rounded-r-md`} // Changed border class for consistent styling
                     />
                 </div>
                 {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
@@ -338,7 +338,7 @@ const RestaurantForm = () => {
                     name="image"
                     id="image"
                     onChange={handleFileChange}
-                    className={`w-full cursor-pointer p-2 border ${errors.image ? 'border-red-500' : 'border-gray-500'} rounded`}
+                    className={`w-full text-gray-600 cursor-pointer p-2 border ${errors.image ? 'border-red-500' : 'border-gray-500'} rounded`}
                 />
                 {errors.image && <p className="text-red-500 text-sm mb-2">{errors.image}</p>}
             </div>
@@ -364,7 +364,7 @@ const RestaurantForm = () => {
                                 },
                             }))
                         }
-                        className={`w-full cursor-pointer md:w-1/4 p-2 border ${errors.open ? 'border-red-500' : 'border-gray-500'} rounded`}
+                        className={`w-full text-gray-600 cursor-pointer md:w-1/4 p-2 border ${errors.open ? 'border-red-500' : 'border-gray-500'} rounded`}
                     />
                     <input
                         type="time"
@@ -379,7 +379,7 @@ const RestaurantForm = () => {
                                 },
                             }))
                         }
-                        className={`w-full cursor-pointer md:w-1/4 p-2 border ${errors.close ? 'border-red-500' : 'border-gray-500'} rounded`}
+                        className={`w-full text-gray-600 cursor-pointer md:w-1/4 p-2 border ${errors.close ? 'border-red-500' : 'border-gray-500'} rounded`}
                     />
                 </div>
                 {(errors.open || errors.close) && (
