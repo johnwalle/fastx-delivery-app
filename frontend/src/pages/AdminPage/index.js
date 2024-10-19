@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, createTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, createTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ChartNoAxesGantt, Pencil, ChevronDown } from 'lucide-react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';

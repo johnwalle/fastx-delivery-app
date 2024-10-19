@@ -14,7 +14,9 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminPage from './pages/AdminPage';
+import SuperAdminPage from './pages/SuperAdminPage'
 import UpdateMenuItems from './pages/UpdateMenuItems';
+import { Superscript } from 'lucide-react';
 
 function App() {
   return (
@@ -32,7 +34,7 @@ function MainContent() {
   const location = useLocation();
 
   // Use matchPath to determine if the current path matches the dynamic routes
-  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant', '/dashboard', '/admin'].includes(location.pathname) ||
+  const shouldHideFooter = ['/login', '/signup', '/forgot', '/create-restaurant', '/dashboard', '/admin', '/super-admin'].includes(location.pathname) ||
     matchPath('/reset-password/:resetToken', location.pathname);
 
   return (
@@ -79,6 +81,9 @@ function MainContent() {
 
         {/* Admin Page */}
         <Route path='/admin' element={<AdminPage />} />
+
+        {/* SuperAdmin Page */}
+        <Route path='/super-admin' element={<SuperAdminPage />} />
 
       </Routes>
 
