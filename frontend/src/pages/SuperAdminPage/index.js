@@ -10,7 +10,7 @@ import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { ChevronDown, Utensils } from 'lucide-react';
 import fastXLogo from '../../assets/fastX-logo.png';
 import CreateRestaurantPage from '../CreateRestaurantPage';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button } from '@mui/material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 
 const NAVIGATION = [
@@ -54,27 +54,58 @@ const customTheme = createTheme({
     },
 });
 
+const orders = [
+    {
+        id: "001",
+        userName: 'Jane Smith',
+        restaurantName: 'Sushi World',
+        phoneNumber: '+251932234554',
+        date: "2024-10-04",
+        items: [
+            { name: "Pizza", quantity: 2, price: 20 },
+            { name: "Pasta", quantity: 1, price: 15 },
+        ],
+        total: 55,
+        status: 'Placed',
+    },
+    {
+        id: "002",
+        userName: 'John Doe',
+        restaurantName: 'Pizza Palace',
+        phoneNumber: '+251910101010',
+        date: "2024-10-03",
+        items: [
+            { name: "Burger", quantity: 1, price: 10 },
+            { name: "Fries", quantity: 1, price: 5 },
+        ],
+        total: 15,
+        status: 'Placed',
+    },
+];
+
 function DemoPageContent({ pathname }) {
-    const orders = [
-        {
-            id: "001",
-            date: "2024-10-04",
-            items: [
-                { name: "Pizza", quantity: 2, price: 20 },
-                { name: "Pasta", quantity: 1, price: 15 },
-            ],
-            total: 55,
-        },
-        {
-            id: "002",
-            date: "2024-10-03",
-            items: [
-                { name: "Burger", quantity: 1, price: 10 },
-                { name: "Fries", quantity: 1, price: 5 },
-            ],
-            total: 15,
-        },
-    ];
+    const [expanded, setExpanded] = React.useState(false);
+    const [orderList, setOrderList] = React.useState(orders);
+    const [selectedStatus, setSelectedStatus] = React.useState({});
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
+    const handleStatusChange = (event, id) => {
+        const updatedOrders = orderList.map((order) =>
+            order.id === id ? { ...order, status: event.target.value } : order
+        );
+        setOrderList(updatedOrders);
+    };
+    const handleSubmit = (id) => {
+        const updatedOrders = orderList.map((order) =>
+            order.id === id ? { ...order, status: selectedStatus[id] || order.status } : order
+        );
+        setOrderList(updatedOrders);
+        // Optionally show a success message or notification
+        console.log(`Order ${id} status updated to ${selectedStatus[id]}`);
+    };
+
+
 
     return (
         <Box
@@ -85,84 +116,69 @@ function DemoPageContent({ pathname }) {
             {pathname === '/order' ?
                 <Typography>
                     <div className='border rounded-lg'>
-                        {orders.map((order, index) => (
-                            <Box>
-                                <Accordion sx={{
+                        {orderList.map((order, index) => (
+                            <Accordion
+                                expanded={expanded == 'panel' + order.id}
+                                onChange={handleChange('panel' + order.id)}
+                                sx={{
                                     backgroundColor: 'transparent',
                                     color: 'white'
                                 }} key={index}>
-                                    <AccordionSummary
-                                        expandIcon={<ChevronDown />}
-                                        aria-controls='panel-content'
-                                        id={order.id}>
-                                        Order #{order.id}
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <div className="bg-[#260904] p-4 text-white">
-                                            <h4 className="text-lg font-semibold mb-4">Items</h4>
-                                            <ul className="space-y-4">
-                                                {order.items.map((item, index) => (
-                                                    <li key={index} className="bg-[#3b1f1b] p-4 rounded-lg shadow-md flex justify-between items-center">
-                                                        <div>
-                                                            <h5 className="text-md font-semibold">{item.name}</h5>
-                                                            <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
-                                                        </div>
-                                                        <p className="text-md font-semibold">${item.price}</p>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            <div className="mt-6 flex justify-between">
-                                                <span className="font-semibold">Total:</span>
-                                                <span className="font-semibold">${order.total}</span>
-                                            </div>
+                                <AccordionSummary
+                                    expandIcon={<ChevronDown />}
+                                    aria-controls='panel-content'
+                                    id={order.id}>
+                                    Order #{order.id}
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <div className="mb-4 px-4">
+                                        <Typography variant="h6" className="font-semibold">Name: {order.userName}</Typography>
+                                        <Typography className="text-gray-400">Restaurant: {order.restaurantName}</Typography>
+                                        <Typography className="text-gray-400">Phone: {order.phoneNumber}</Typography>
+                                    </div>
+                                    <div className="p-4 min-w-[250px] flex flex-col">
+                                        <h3 className="text-lg font-bold mb-4">Order Details</h3>
+                                        <div className="mb-4">
+                                            {order.items.map((item, index) => (
+                                                <div key={index} className="flex justify-between py-2 text-white">
+                                                    <span>{item.name} X{item.quantity}</span>
+                                                    <span>{item.price} Birr</span>
+                                                </div>
+                                            ))}
                                         </div>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </Box>
+                                        <div className="flex justify-between py-2 font-semibold text-white">
+                                            <span>Total Price:</span>
+                                            <span>{order.total} Birr</span>
+                                        </div>
+                                    </div>
+                                    <div className="mb-4">
+                                        <Typography variant="h6" sx={{ marginBottom: '10px' }}>Update Status:</Typography>
+                                        <FormControl fullWidth className="mt-2">
+                                            <InputLabel>Status</InputLabel>
+                                            <Select
+                                                sx={{ color: 'red' }}
+                                                value={order.status}
+                                                label="Status"
+                                                onChange={(event) => handleStatusChange(event, order.id)}
+                                            >
+                                                <MenuItem value="Placed">Placed</MenuItem>
+                                                <MenuItem value="Preparing">Preparing</MenuItem>
+                                                <MenuItem value="On the Way">On the Way</MenuItem>
+                                                <MenuItem value="Delivered">Delivered</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    {/* Submit Button */}
+                                    <button
+                                        onClick={() => handleSubmit(order.id)}
+                                        className="primary mt-2"
+                                    >
+                                        Submit Status
+                                    </button>
+                                </AccordionDetails>
+                            </Accordion>
+
                         ))}
-                        {/* <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ChevronDown />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                            >
-                                Accordion 1
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ChevronDown />}
-                                aria-controls="panel2-content"
-                                id="panel2-header"
-                            >
-                                Accordion 2
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion defaultExpanded>
-                            <AccordionSummary
-                                expandIcon={<ChevronDown />}
-                                aria-controls="panel3-content"
-                                id="panel3-header"
-                            >
-                                Accordion Actions
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </AccordionDetails>
-                            <AccordionActions>
-                                <Button>Cancel</Button>
-                                <Button>Agree</Button>
-                            </AccordionActions>
-                        </Accordion> */}
                     </div>
                 </Typography> :
                 <Typography>
