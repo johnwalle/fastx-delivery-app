@@ -14,7 +14,7 @@ const useLogin = () => {
         console.log('All the form values', "email: ", email, "password: ", password);
 
         const apiUrl = process.env.REACT_APP_API_URL;
-
+        console.log('api url', apiUrl);
         setIsLoading(true);
         try {
             const response = await axios.post(apiUrl + "/auth/login", {
