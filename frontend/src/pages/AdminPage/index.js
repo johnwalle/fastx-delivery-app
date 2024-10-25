@@ -139,51 +139,60 @@ function DemoPageContent({ pathname }) {
                     </div>
                 </Typography>
             ) : pathname === '/menu' ? (
-                <div className="border rounded-lg">
-                    {loading ? (
-                        <p>Loading menu items...</p>
-                    ) : error ? (
-                        <p>Error loading menu items</p>
-                    ) : notFound ? (
-                        <p>No menu items found</p>
-                    ) : (
-                        <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{ color: 'white' }}>Menu Items</TableCell>
-                                        <TableCell sx={{ color: 'white' }} align="right"></TableCell>
-                                        <TableCell sx={{ color: 'white' }} align="right"></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {menuItemsState.map((menu) => (
-                                        <TableRow
-                                            key={menu._id}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell sx={{ color: 'white' }} component="th" scope="row">
-                                                {menu.name}
-                                            </TableCell>
-                                            <TableCell sx={{ color: 'white' }} align="right">
-                                                <Link className="text-white" to={`/update-menu/${menu._id}`}>
-                                                    <button className="bg-green-500 py-0 round-md">Update</button>
-                                                </Link>
-                                            </TableCell>
-                                            <TableCell sx={{ color: 'white' }} align="right">
-                                                <button
-                                                    className="primary py-0"
-                                                    onClick={() => deleteMenuItem(menu._id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </TableCell>
+                <div>
+                    <div className="border rounded-lg">
+                        {loading ? (
+                            <p>Loading menu items...</p>
+                        ) : error ? (
+                            <p>Error loading menu items</p>
+                        ) : notFound ? (
+                            <p>No menu items found</p>
+                        ) : (
+                            <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ color: 'white' }}>Menu Items</TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right"></TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right"></TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    )}
+                                    </TableHead>
+                                    <TableBody>
+                                        {menuItemsState.map((menu) => (
+                                            <TableRow
+                                                key={menu._id}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                            >
+                                                <TableCell sx={{ color: 'white' }} component="th" scope="row">
+                                                    {menu.name}
+                                                </TableCell>
+                                                <TableCell sx={{ color: 'white' }} align="right">
+                                                    <Link className="text-white" to={`/update-menu/${menu._id}`}>
+                                                        <button className="bg-green-500 py-0 round-md">Update</button>
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell sx={{ color: 'white' }} align="right">
+                                                    <button
+                                                        className="primary py-0"
+                                                        onClick={() => deleteMenuItem(menu._id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
+                    </div>
+                    <div className='mt-10'>
+                        <Link to={'/create-menu'}>
+                            <button class="flex items-center px-4 py-2 primary text-white font-semibold rounded-md hover:bg-red-700 transition">
+                                <span class="mr-2 text-lg">+</span> Add Menu
+                            </button>
+                        </Link>
+                    </div>
                 </div>
             ) : pathname === '/profile' ? (
                 <Typography>
