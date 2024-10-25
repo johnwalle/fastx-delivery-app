@@ -6,9 +6,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import fastXLogo from '../../assets/fastX-logo.png';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
 import { Link } from 'react-router-dom';
-import UpdateRestaurantForm from '../../components/updateRestaurantForm';
 import useAdminRestaurantStore from '../../admin/restaurant.store';
 import useAdminMenuStore from '../../admin/menu.store';
 import authStore from '../../store/auth.store';
@@ -115,11 +113,6 @@ function DemoPageContent({ pathname }) {
         }
     };
 
-    const logoutHandler = () => {
-        authStore.getState().clearUserData();
-    }
-
-
     return (
         <Box sx={{ py: 4, px: 3 }}>
             {pathname === '/overview' ? (
@@ -142,7 +135,7 @@ function DemoPageContent({ pathname }) {
                             </div>
                         </div>
                         <div class="mt-8">
-                            <button class="py-2 primary text-white rounded-lg focus:outline-none" onClick={logoutHandler}>
+                            <button class="py-2 primary text-white rounded-lg focus:outline-none">
                                 Logout
                             </button>
                         </div>
@@ -152,19 +145,12 @@ function DemoPageContent({ pathname }) {
                 <div>
                     <div className="border rounded-lg">
                         {loading ? (
-                            <p className="text-lg font-medium text-blue-600 animate-pulse">
-                                Loading menu items...
-                            </p>
+                            <p>Loading menu items...</p>
                         ) : error ? (
-                            <p className="text-lg font-medium text-red-600 bg-red-100 p-3 rounded-md shadow">
-                                Error loading menu items
-                            </p>
+                            <p>Error loading menu items</p>
                         ) : notFound ? (
-                            <p className="text-lg font-medium text-yellow-600 bg-yellow-100 p-3 rounded-md shadow">
-                                No menu items found
-                            </p>
+                            <p>No menu items found</p>
                         ) : (
-
                             <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                     <TableHead>
@@ -211,15 +197,6 @@ function DemoPageContent({ pathname }) {
                         </Link>
                     </div>
                 </div>
-            ) : pathname === '/profile' ? (
-                <Typography>
-                    <div className="pt-10 pb-7">
-                        <div className="max-w-3xl mx-auto p-6 py-10 bg-white shadow-md rounded-lg">
-                            <h1 className="text-2xl text-[#A40C0C] tes font-bold mb-4">Restaurant Profile</h1>
-                            <UpdateRestaurantForm />
-                        </div>
-                    </div>
-                </Typography>
             ) : null}
         </Box>
     );
