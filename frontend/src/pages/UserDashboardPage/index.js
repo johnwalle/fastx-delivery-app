@@ -120,6 +120,11 @@ function DemoPageContent({ pathname }) {
       {pathname === '/dashboard' ? (
         <Typography>
           <div>Dashboard content for dashboard</div>
+          <div class="mt-8">
+            <button class="py-2 primary text-white rounded-lg focus:outline-none">
+              Logout
+            </button>
+          </div>
         </Typography>
       ) : pathname === '/orders' ? (
         <Typography>
