@@ -136,6 +136,11 @@ function DemoPageContent({ pathname }) {
                                 <p className="mt-2">"Loved the food!" - Emily</p>
                             </div>
                         </div>
+                        <div class="mt-8">
+                            <button class="py-2 primary text-white rounded-lg focus:outline-none">
+                                Logout
+                            </button>
+                        </div>
                     </div>
                 </Typography>
             ) : pathname === '/menu' ? (
