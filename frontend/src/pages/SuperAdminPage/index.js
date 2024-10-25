@@ -7,10 +7,11 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { ChevronDown, Utensils } from 'lucide-react';
+import { ChartNoAxesGantt, ChevronDown, Utensils } from 'lucide-react';
 import fastXLogo from '../../assets/fastX-logo.png';
 import CreateRestaurantPage from '../CreateRestaurantPage';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 
 const NAVIGATION = [
@@ -24,6 +25,11 @@ const NAVIGATION = [
         title: 'Add Restaurants',
         icon: <Utensils />,
     },
+    {
+        segment: 'manage',
+        title: 'Manage Restaurant',
+        icon: <ChartNoAxesGantt />
+    }
 ];
 
 const customTheme = createTheme({
@@ -105,6 +111,22 @@ function DemoPageContent({ pathname }) {
         console.log(`Order ${id} status updated to ${selectedStatus[id]}`);
     };
 
+    const restaurantNames = [
+        "Urban Bites",
+        "Flavor Haven",
+        "The Hungry Spoon",
+        "Savory Street",
+        "Bistro Bliss",
+        "Fresh Fare",
+        "Spice & Dice",
+        "Harvest Grill",
+        "Epicurean Delight",
+        "The Flavor Factory",
+        "Roots & Grains",
+        "Coastal Cravings",
+        "Sizzle & Serve",
+    ];
+
 
 
     return (
@@ -114,7 +136,7 @@ function DemoPageContent({ pathname }) {
             }}
         >
             {pathname === '/order' ?
-                <Typography>
+                (<Typography>
                     <div className='border rounded-lg'>
                         {orderList.map((order, index) => (
                             <Accordion
@@ -180,10 +202,49 @@ function DemoPageContent({ pathname }) {
 
                         ))}
                     </div>
-                </Typography> :
-                <Typography>
-                    <CreateRestaurantPage />
-                </Typography>}
+                </Typography>) : pathname == '/restaurant' ?
+                    (<Typography>
+                        <CreateRestaurantPage />
+                    </Typography>) :
+                    (<Typography>
+                        <div className='border rounded-lg'>
+                            <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ color: 'white' }}>Restaurant Names</TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right"></TableCell>
+                                            <TableCell sx={{ color: 'white' }} align="right"></TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {restaurantNames.map((restaurant, index) => (
+                                            <TableRow
+                                                key={index}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                            >
+                                                <TableCell sx={{ color: 'white' }} component="th" scope="row">
+                                                    {restaurant}
+                                                </TableCell>
+                                                <TableCell sx={{ color: 'white' }} align="right">
+                                                    <Link className="text-white" to={'/update-restaurant'}>
+                                                        <button className="bg-green-500 py-0 round-md">Update</button>
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell sx={{ color: 'white' }} align="right">
+                                                    <button
+                                                        className="primary py-0"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    </Typography>)}
         </Box>
     );
 }
