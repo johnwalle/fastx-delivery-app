@@ -152,12 +152,19 @@ function DemoPageContent({ pathname }) {
                 <div>
                     <div className="border rounded-lg">
                         {loading ? (
-                            <p>Loading menu items...</p>
+                            <p className="text-lg font-medium text-blue-600 animate-pulse">
+                                Loading menu items...
+                            </p>
                         ) : error ? (
-                            <p>Error loading menu items</p>
+                            <p className="text-lg font-medium text-red-600 bg-red-100 p-3 rounded-md shadow">
+                                Error loading menu items
+                            </p>
                         ) : notFound ? (
-                            <p>No menu items found</p>
+                            <p className="text-lg font-medium text-yellow-600 bg-yellow-100 p-3 rounded-md shadow">
+                                No menu items found
+                            </p>
                         ) : (
+
                             <TableContainer sx={{ backgroundColor: 'transparent' }} component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                     <TableHead>
