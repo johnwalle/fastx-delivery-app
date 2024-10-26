@@ -58,7 +58,7 @@ const Navbar = () => {
 
     // Get user data from auth store
     const userData = authStore((state) => state.userData);
-    const userRole = userData?.user?.role; // Assuming 'role' is available in userData
+    const userRole = userData?.user?.role;
 
     // Cart logic
     const { getCartItemCount, cart, getCart } = cartStore();
@@ -160,30 +160,33 @@ const Navbar = () => {
                         {/* Links based on user authentication */}
                         {userData ? (
                             <div className="flex">
-                                <div>
-                                    <div className="flex gap-2 items-center cursor-pointer" onClick={handleClick}>
-                                        <ShoppingCart className="text-white" />
-                                        {(cartItemCount > 0 || cartLength > 0) && (
-                                            <label className="bg-slate-200 rounded-full p-1 px-3 cursor-pointer">
-                                                {cartItemCount || cartLength}
-                                            </label>
-                                        )}
-                                    </div>
-                                    <Popover
-                                        id={id}
-                                        open={open}
-                                        anchorEl={anchorEl}
-                                        onClose={handleClose}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'left',
-                                        }}
-                                    >
-                                        <Typography sx={{ p: 2 }}>
-                                            <Cart />
-                                        </Typography>
-                                    </Popover>
-                                </div>
+
+
+                                {userRole === 'user' && (
+                                    <div>
+                                        <div className="flex gap-2 items-center cursor-pointer" onClick={handleClick}>
+                                            <ShoppingCart className="text-white" />
+                                            {(cartItemCount > 0 || cartLength > 0) && (
+                                                <label className="bg-slate-200 rounded-full p-1 px-3 cursor-pointer">
+                                                    {cartItemCount || cartLength}
+                                                </label>
+                                            )}
+                                        </div>
+                                        <Popover
+                                            id={id}
+                                            open={open}
+                                            anchorEl={anchorEl}
+                                            onClose={handleClose}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'left',
+                                            }}
+                                        >
+                                            <Typography sx={{ p: 2 }}>
+                                                <Cart />
+                                            </Typography>
+                                        </Popover>
+                                    </div>)}
 
                                 <div className="hidden md:block">
                                     <div className="ml-4 flex items-center md:ml-6">

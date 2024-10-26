@@ -22,6 +22,10 @@ function MenuItem({ menuItems }) {
         userData: state.userData,
     }));
 
+
+    // Get user data from auth store
+    const userRole = userData?.user?.role;
+
     const token = userData?.tokens?.access?.token;
     const navigate = useNavigate();
 
@@ -187,10 +191,15 @@ function MenuItem({ menuItems }) {
                                     <div className="text-gray-400 line-clamp-2 text-sm">{item.description}</div>
                                     <div className="flex justify-between pr-5">
                                         <div className="md:text-lg text-sm text-white">{item.price} Birr</div>
-                                        <ShoppingCart
-                                            className="text-red-700 hover:text-red-400 cursor-pointer"
-                                            onClick={() => cartHandler(item)}
-                                        />
+
+
+                                        {
+                                            userRole === 'user' && (
+                                                <ShoppingCart
+                                                    className="text-red-700 hover:text-red-400 cursor-pointer"
+                                                    onClick={() => cartHandler(item)}
+                                                />)
+                                        }
                                     </div>
                                 </div>
                             </div>
