@@ -18,6 +18,7 @@ import SuperAdminPage from './pages/SuperAdminPage'
 import UpdateMenuItems from './pages/UpdateMenuItems';
 import { Superscript } from 'lucide-react';
 import authStore from './store/auth.store';
+import UpdateRestaurant from './pages/UpdateRestaurant';
 
 function App() {
   return (
@@ -71,6 +72,9 @@ function MainContent() {
 
         {/* Create Menu Page */}
         <Route path='/create-menu' element={isAdmin ? <CreateMenu /> : <LandingPage />} />
+
+        {/* Update Restaurant Profile */}
+        <Route path='/update-restaurant' element={<UpdateRestaurant />} />
 
         {/* Update Menu Page */}
         <Route path='/update-menu/:menuItemId' element={isAdmin ? <UpdateMenuItems /> : <LandingPage />} />
