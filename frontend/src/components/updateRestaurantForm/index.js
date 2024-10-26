@@ -74,10 +74,10 @@ function UpdateRestaurantForm() {
                     longitude: restaurantData.location?.longitude,
                 },
                 working_days: restaurantData.working_days,
-                phone_number: restaurantData.phone_number.slice(4),
+                phone_number: restaurantData.phone_number?.slice(4),
                 operating_hours: {
-                    open: restaurantData.operating_hours.open,
-                    close: restaurantData.operating_hours.close,
+                    open: restaurantData.operating_hours?.open,
+                    close: restaurantData.operating_hours?.close,
                 },
             });
             if (restaurantData.image) {
