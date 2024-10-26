@@ -216,7 +216,7 @@ function UpdateRestaurantForm() {
                     type="text"
                     name="cuisine_types"
                     id="cuisine_types"
-                    value={formData.cuisine_types.join(', ')}
+                    value={formData?.cuisine_types?.join(', ')}
                     onChange={(e) =>
                         setFormData((prevState) => ({
                             ...prevState,
@@ -277,7 +277,7 @@ function UpdateRestaurantForm() {
                 {errors.working_days && <p className="text-red-500 text-sm mb-2">{errors.working_days}</p>}
             </div>
             <div className="mb-4">
-                {formData.working_days.length > 0 && (
+                {formData?.working_days?.length > 0 && (
                     <div className="bg-gray-100 p-4 rounded-md shadow-md">
                         <h4 className="text-lg text-[#A40C0C]  font-semibold mb-2">Selected Working Days</h4>
                         <div className="flex flex-wrap gap-2">
@@ -364,7 +364,7 @@ function UpdateRestaurantForm() {
 
                         type="time"
                         name="open"
-                        value={formData.operating_hours.open}
+                        value={formData.operating_hours?.open}
                         onChange={(e) =>
                             setFormData((prevState) => ({
                                 ...prevState,
@@ -379,7 +379,7 @@ function UpdateRestaurantForm() {
                     <input
                         type="time"
                         name="close"
-                        value={formData.operating_hours.close}
+                        value={formData.operating_hours?.close}
                         onChange={(e) =>
                             setFormData((prevState) => ({
                                 ...prevState,
