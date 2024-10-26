@@ -24,12 +24,7 @@ const NAVIGATION = [
         segment: 'menu',
         title: 'Menu Items',
         icon: <Pencil />,
-    },
-    {
-        segment: 'profile',
-        title: 'Restaurant Profile',
-        icon: <AccountBoxIcon />,
-    },
+    }
 ];
 
 const customTheme = createTheme({
@@ -211,15 +206,6 @@ function DemoPageContent({ pathname }) {
                         </Link>
                     </div>
                 </div>
-            ) : pathname === '/profile' ? (
-                <Typography>
-                    <div className="pt-10 pb-7">
-                        <div className="max-w-3xl mx-auto p-6 py-10 bg-white shadow-md rounded-lg">
-                            <h1 className="text-2xl text-[#A40C0C] tes font-bold mb-4">Restaurant Profile</h1>
-                            <UpdateRestaurantForm />
-                        </div>
-                    </div>
-                </Typography>
             ) : null}
         </Box>
     );
