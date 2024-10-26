@@ -82,7 +82,7 @@ function MainContent() {
         <Route path='/order/confirmation' element={<OrderConfirmationPage />} />
 
         {/* User Dashboard */}
-        <Route path='/dashboard' element={<UserDashboardPage />} />
+        <Route path='/dashboard' element={userData ? <UserDashboardPage /> : <LandingPage />} />
 
         {/* Admin Page */}
         <Route path='/admin' element={isAdmin ? <AdminPage /> : <LandingPage />} />

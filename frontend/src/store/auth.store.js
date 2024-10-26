@@ -42,6 +42,7 @@ const authStore = create((set, get) => ({
     clearUserData: () => {
         set({ userData: null });
         setCookie('userData', '', -1); // Set the cookie to expire immediately
+        console.log('User Data:', null)
     },
     updateUserDataToken: (newToken) => {
         set((state) => ({

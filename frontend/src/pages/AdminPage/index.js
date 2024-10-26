@@ -81,6 +81,12 @@ function DemoPageContent({ pathname }) {
 
     console.log("menuItemssssssssssss", menuItemsState);
 
+
+    const logoutHandler = () => {
+        authStore.getState().clearUserData();
+    };
+
+
     // Fetch the restaurant data on component mount
     useEffect(() => {
         fetchRestaurantData(token);
@@ -137,7 +143,7 @@ function DemoPageContent({ pathname }) {
                             </div>
                         </div>
                         <div class="mt-8">
-                            <button class="py-2 primary text-white rounded-lg focus:outline-none">
+                            <button class="py-2 primary text-white rounded-lg focus:outline-none" onClick={logoutHandler}>
                                 Logout
                             </button>
                         </div>
