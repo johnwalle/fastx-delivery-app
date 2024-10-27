@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import useCreateRestaurant from '../../hooks/useCreateRestaurant';
 import AddressForm from '../adressForm';
 import authStore from '../../store/auth.store';
-import useAdminRestaurantStore from '../../admin/restaurant.store';
 import useUpdateRestaurant from '../../admin/hooks/useUpdateRestaurant';
+import useRestaurantStore from '../../store/restaurant.store';
 
-function UpdateRestaurantForm() {
+function UpdateRestaurantForm({ restaurantId }) {
     const { userData } = authStore();
-    const token = userData?.tokens?.access?.token || null;
 
-    const { restaurantData, loading, fetchRestaurantData } = useAdminRestaurantStore();
+    const { fetchSingleRestaurant, restaurant } = useRestaurantStore();
 
-    console.log("restaurant dddddddddddddata", restaurantData)
+    console.log("restaurant dddddddddddddata", restaurant)
     const [formData, setFormData] = useState({
         name: '',
         cuisine_types: [],
@@ -54,37 +53,37 @@ function UpdateRestaurantForm() {
     };
 
     useEffect(() => {
-        fetchRestaurantData(token);
-    }, [token]);
+        fetchSingleRestaurant(restaurantId);
+    }, [restaurantId]);
 
     useEffect(() => {
-        if (restaurantData) {
+        if (restaurant) {
             setFormData({
-                name: restaurantData.name,
-                cuisine_types: restaurantData.cuisine_types,
-                description: restaurantData.description,
+                name: restaurant.name,
+                cuisine_types: restaurant.cuisine_types,
+                description: restaurant.description,
                 address: {
-                    street: restaurantData.address?.street,
-                    city: restaurantData.address?.city,
-                    state: restaurantData.address?.state,
-                    country: restaurantData.address?.country,
+                    street: restaurant.address?.street,
+                    city: restaurant.address?.city,
+                    state: restaurant.address?.state,
+                    country: restaurant.address?.country,
                 },
                 location: {
-                    latitude: restaurantData.location?.latitude,
-                    longitude: restaurantData.location?.longitude,
+                    latitude: restaurant.location?.latitude,
+                    longitude: restaurant.location?.longitude,
                 },
-                working_days: restaurantData.working_days,
-                phone_number: restaurantData.phone_number?.slice(4),
+                working_days: restaurant.working_days,
+                phone_number: restaurant.phone_number?.slice(4),
                 operating_hours: {
-                    open: restaurantData.operating_hours?.open,
-                    close: restaurantData.operating_hours?.close,
+                    open: restaurant.operating_hours?.open,
+                    close: restaurant.operating_hours?.close,
                 },
             });
-            if (restaurantData.image) {
-                setImagePreview(restaurantData.image);
+            if (restaurant.image) {
+                setImagePreview(restaurant.image);
             }
         }
-    }, [restaurantData]);
+    }, [restaurant]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -134,21 +133,23 @@ function UpdateRestaurantForm() {
     };
 
 
-    console.log('fffforrrm data', formData)
+    console.log('fffforrrm data', formData);
 
     const { updateRestaurant, isLoading, SnackbarComponent } = useUpdateRestaurant();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log('save change clicked')
+
         if (!validateStep()) return;
 
         const fullPhoneNumber = `+251${formData.phone_number}`;
 
         const { name, cuisine_types, description, address, working_days, operating_hours, location, image } = formData;
-        const restaurantID = restaurantData._id;
+        const restaurantID = restaurant._id;
 
-        
+
         try {
             await updateRestaurant({
                 restaurantID,

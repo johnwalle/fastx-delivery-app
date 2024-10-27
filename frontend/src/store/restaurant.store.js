@@ -4,6 +4,7 @@ import axios from 'axios';
 // Create the restaurant store using Zustand
 const useRestaurantStore = create((set) => ({
     // State
+    restaurant : {},
     restaurants: [], // Changed from 'restaurant' to 'restaurants' for clarity
     loading: false,
     error: null,
@@ -35,6 +36,31 @@ const useRestaurantStore = create((set) => ({
         } catch (error) {
             console.error('Error fetching restaurants:', error);
             set({ error: error.message, loading: false, notFound: false }); // Set error state if fetching fails
+        }
+    },
+
+    // fetch a single restaurant
+    fetchSingleRestaurant: async (id) => {
+        set({ loading: true, error: null });
+
+        try {
+            // Fetch the restaurant data
+            const restaurantResponse = await axios.get(`${process.env.REACT_APP_API_URL}/restaurants/${id}`);
+
+            // Check if the response is successful
+            if (restaurantResponse.status === 200) {
+                console.log('Successfully fetched restaurant data ', restaurantResponse.data);
+                set({
+                    restaurant: restaurantResponse.data,
+                    loading: false,
+                    notFound: false,
+                });
+            } else {
+                set({ notFound: true, loading: false });
+            }
+        } catch (error) {
+            console.error('Error fetching restaurant data:', error);
+            set({ error: error.message, loading: false, notFound: false });
         }
     },
 }));

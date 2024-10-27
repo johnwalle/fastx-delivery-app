@@ -12,6 +12,11 @@ import fastXLogo from '../../assets/fastX-logo.png';
 import CreateRestaurantPage from '../CreateRestaurantPage';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { Link } from 'react-router-dom';
+import useRestaurantStore from '../../store/restaurant.store';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import authStore from '../../store/auth.store';
+import orderStore from '../../store/order.store';
 
 
 const NAVIGATION = [
@@ -111,21 +116,79 @@ function DemoPageContent({ pathname }) {
         console.log(`Order ${id} status updated to ${selectedStatus[id]}`);
     };
 
-    const restaurantNames = [
-        "Urban Bites",
-        "Flavor Haven",
-        "The Hungry Spoon",
-        "Savory Street",
-        "Bistro Bliss",
-        "Fresh Fare",
-        "Spice & Dice",
-        "Harvest Grill",
-        "Epicurean Delight",
-        "The Flavor Factory",
-        "Roots & Grains",
-        "Coastal Cravings",
-        "Sizzle & Serve",
-    ];
+
+    // fetch the restaurants from the store
+
+    const { restaurants, fetchRestaurants } = useRestaurantStore();
+
+    useEffect(() => {
+        fetchRestaurants();
+    }, []);
+
+
+
+    const [restaurantsState, setRestaurantsState] = React.useState(restaurants);
+
+    useEffect(() => {
+        setRestaurantsState(restaurants);
+    }, [restaurants]);
+
+    // getting the token from the store
+
+    const { userData } = authStore();
+
+    const token = userData.tokens?.access?.token;
+
+
+    //delete restaurant 
+
+    const deleteRestaurant = async (restaurantId) => {
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/restaurants/delete/${restaurantId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log("delete-- response", response);
+
+            if (response.status === 200) {
+                const updatedRestaurants = restaurantsState.filter((restaurant) => restaurant._id !== restaurantId);
+                setRestaurantsState(updatedRestaurants);
+
+                console.log('Restaurant deleted successfully');
+            }
+        } catch (error) {
+            console.error('Error deleting restaurant:', error);
+        }
+    };
+
+
+    // get all orders
+
+    const { allOrders, getAllOrders } = orderStore();
+
+    useEffect(() => {
+        // Define a function to fetch orders
+        const fetchOrders = () => {
+            getAllOrders(token);
+        };
+
+        // Initial fetch when component mounts
+        fetchOrders();
+
+        // Set up interval to fetch orders every 5 seconds (5000 ms)
+        const intervalId = setInterval(fetchOrders, 5000);
+
+        // Clean up the interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [token, getAllOrders]); // Adding dependencies to reinitialize if token or getAllOrders changes
+
+
+
+
+
+
 
 
 
@@ -138,7 +201,7 @@ function DemoPageContent({ pathname }) {
             {pathname === '/order' ?
                 (<Typography>
                     <div className='border rounded-lg'>
-                        {orderList.map((order, index) => (
+                        {allOrders?.map((order, index) => (
                             <Accordion
                                 expanded={expanded == 'panel' + order.id}
                                 onChange={handleChange('panel' + order.id)}
@@ -150,27 +213,28 @@ function DemoPageContent({ pathname }) {
                                     expandIcon={<ChevronDown />}
                                     aria-controls='panel-content'
                                     id={order.id}>
-                                    Order #{order.id}
+                                    Order #{order.tx_ref}
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <div className="mb-4 px-4">
-                                        <Typography variant="h6" className="font-semibold">Name: {order.userName}</Typography>
+                                        <Typography variant="h6" className="font-semibold">Name: {order.tx_ref}</Typography>
                                         <Typography className="text-gray-400">Restaurant: {order.restaurantName}</Typography>
-                                        <Typography className="text-gray-400">Phone: {order.phoneNumber}</Typography>
+                                        <Typography className="text-gray-400">Phone: {order.delivery_instructions
+                                        }</Typography>
                                     </div>
                                     <div className="p-4 min-w-[250px] flex flex-col">
                                         <h3 className="text-lg font-bold mb-4">Order Details</h3>
                                         <div className="mb-4">
-                                            {order.items.map((item, index) => (
+                                            {order.OrderItems.map((item, index) => (
                                                 <div key={index} className="flex justify-between py-2 text-white">
-                                                    <span>{item.name} X{item.quantity}</span>
+                                                    <span>{item.ItemName} X{item.quantity}</span>
                                                     <span>{item.price} Birr</span>
                                                 </div>
                                             ))}
                                         </div>
                                         <div className="flex justify-between py-2 font-semibold text-white">
                                             <span>Total Price:</span>
-                                            <span>{order.total} Birr</span>
+                                            <span>{order.total_amount} Birr</span>
                                         </div>
                                     </div>
                                     <div className="mb-4">
@@ -218,22 +282,23 @@ function DemoPageContent({ pathname }) {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {restaurantNames.map((restaurant, index) => (
+                                        {restaurantsState.map((restaurant, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
                                                 <TableCell sx={{ color: 'white' }} component="th" scope="row">
-                                                    {restaurant}
+                                                    {restaurant.name}
                                                 </TableCell>
                                                 <TableCell sx={{ color: 'white' }} align="right">
-                                                    <Link className="text-white" to={'/update-restaurant'}>
+                                                    <Link className="text-white" to={`/update-restaurant/${restaurant._id}`}>
                                                         <button className="bg-green-500 py-0 round-md">Update</button>
                                                     </Link>
                                                 </TableCell>
                                                 <TableCell sx={{ color: 'white' }} align="right">
                                                     <button
                                                         className="primary py-0"
+                                                        onClick={() => deleteRestaurant(restaurant._id)}
                                                     >
                                                         Delete
                                                     </button>
