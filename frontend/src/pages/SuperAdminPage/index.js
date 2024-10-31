@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { createTheme } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { ChartNoAxesGantt, ChevronDown, Utensils } from 'lucide-react';
 import fastXLogo from '../../assets/fastX-logo.png';
 import CreateRestaurantPage from '../CreateRestaurantPage';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select } from '@mui/material';
 import { Link } from 'react-router-dom';
 import useRestaurantStore from '../../store/restaurant.store';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import authStore from '../../store/auth.store';
 import orderStore from '../../store/order.store';
 
@@ -67,46 +66,23 @@ const customTheme = createTheme({
 
 const orders = [
     {
-        id: "001",
-        userName: 'Jane Smith',
-        restaurantName: 'Sushi World',
-        phoneNumber: '+251932234554',
-        date: "2024-10-04",
-        items: [
-            { name: "Pizza", quantity: 2, price: 20 },
-            { name: "Pasta", quantity: 1, price: 15 },
-        ],
-        total: 55,
+        id: '001',
         status: 'Placed',
     },
     {
-        id: "002",
-        userName: 'John Doe',
-        restaurantName: 'Pizza Palace',
-        phoneNumber: '+251910101010',
-        date: "2024-10-03",
-        items: [
-            { name: "Burger", quantity: 1, price: 10 },
-            { name: "Fries", quantity: 1, price: 5 },
-        ],
-        total: 15,
         status: 'Placed',
     },
 ];
 
 function DemoPageContent({ pathname }) {
     const [expanded, setExpanded] = React.useState(false);
-    const [orderList, setOrderList] = React.useState(orders);
     const [selectedStatus, setSelectedStatus] = React.useState({});
+    const [orderList, setOrderList] = React.useState([]);
+
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
-    const handleStatusChange = (event, id) => {
-        const updatedOrders = orderList.map((order) =>
-            order.id === id ? { ...order, status: event.target.value } : order
-        );
-        setOrderList(updatedOrders);
-    };
+
     const handleSubmit = (id) => {
         const updatedOrders = orderList.map((order) =>
             order.id === id ? { ...order, status: selectedStatus[id] || order.status } : order
@@ -163,10 +139,9 @@ function DemoPageContent({ pathname }) {
         }
     };
 
-
     // get all orders
-
     const { allOrders, getAllOrders } = orderStore();
+    console.log("All Orders", allOrders)
 
     useEffect(() => {
         // Define a function to fetch orders
@@ -183,6 +158,34 @@ function DemoPageContent({ pathname }) {
         // Clean up the interval on component unmount
         return () => clearInterval(intervalId);
     }, [token, getAllOrders]); // Adding dependencies to reinitialize if token or getAllOrders changes
+
+    useEffect(() => {
+        if (Array.isArray(allOrders)) {
+            setOrderList(allOrders);
+        }
+    }, [allOrders]);
+
+    const handleStatusChange = async (event, orderId) => {
+        try {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/update/${orderId}`, {
+                order_status: event.target.value
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                const updatedOrders = allOrders.map((order) =>
+                    order._id === orderId ? { ...order, order_status: event.target.value } : order
+                );
+                setOrderList(updatedOrders);
+                console.log('order status updated successfully');
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+        }
+    };
 
 
 
@@ -201,10 +204,10 @@ function DemoPageContent({ pathname }) {
             {pathname === '/order' ?
                 (<Typography>
                     <div className='border rounded-lg'>
-                        {allOrders?.map((order, index) => (
+                        {orderList?.map((order, index) => (
                             <Accordion
-                                expanded={expanded == 'panel' + order.id}
-                                onChange={handleChange('panel' + order.id)}
+                                expanded={expanded == 'panel' + order._id}
+                                onChange={handleChange('panel' + order._id)}
                                 sx={{
                                     backgroundColor: 'transparent',
                                     color: 'white'
@@ -213,14 +216,15 @@ function DemoPageContent({ pathname }) {
                                     expandIcon={<ChevronDown />}
                                     aria-controls='panel-content'
                                     id={order.id}>
-                                    Order #{order.tx_ref}
+                                    Order #<span className='text-blue-500'>{order.tx_ref}</span>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <div className="mb-4 px-4">
                                         <Typography variant="h6" className="font-semibold">Name: {order.tx_ref}</Typography>
                                         <Typography className="text-gray-400">Restaurant: {order.restaurantName}</Typography>
-                                        <Typography className="text-gray-400">Phone: {order.delivery_instructions
-                                        }</Typography>
+                                        <Typography className="text-gray-400">Phone: { }</Typography>
+                                        {order.delivery_instructions.length > 0 && <Typography className='text-gray-400'>Description: {order.delivery_instructions}</Typography>}
+                                        <Typography className='text-gray-400'>Payment Status: <span className='text-green-400'>{order.payment_status}</span></Typography>
                                     </div>
                                     <div className="p-4 min-w-[250px] flex flex-col">
                                         <h3 className="text-lg font-bold mb-4">Order Details</h3>
@@ -243,24 +247,17 @@ function DemoPageContent({ pathname }) {
                                             <InputLabel>Status</InputLabel>
                                             <Select
                                                 sx={{ color: 'red' }}
-                                                value={order.status}
+                                                defaultValue={order.order_status}
+                                                value={order.order_status}
                                                 label="Status"
-                                                onChange={(event) => handleStatusChange(event, order.id)}
+                                                onChange={(event) => handleStatusChange(event, order._id)}
                                             >
-                                                <MenuItem value="Placed">Placed</MenuItem>
                                                 <MenuItem value="Preparing">Preparing</MenuItem>
                                                 <MenuItem value="On the Way">On the Way</MenuItem>
                                                 <MenuItem value="Delivered">Delivered</MenuItem>
                                             </Select>
                                         </FormControl>
                                     </div>
-                                    {/* Submit Button */}
-                                    <button
-                                        onClick={() => handleSubmit(order.id)}
-                                        className="primary mt-2"
-                                    >
-                                        Submit Status
-                                    </button>
                                 </AccordionDetails>
                             </Accordion>
 
