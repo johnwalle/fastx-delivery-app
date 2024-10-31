@@ -187,12 +187,23 @@ function DemoPageContent({ pathname }) {
         }
     };
 
+    function formatDateTime(createdAt) {
+        const date = new Date(createdAt);
 
+        const formattedDate = date.toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
 
+        const formattedTime = date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
 
-
-
-
+        return `${formattedDate} ${formattedTime}`;
+    }
 
 
     return (
@@ -216,13 +227,13 @@ function DemoPageContent({ pathname }) {
                                     expandIcon={<ChevronDown />}
                                     aria-controls='panel-content'
                                     id={order.id}>
-                                    Order #<span className='text-blue-500'>{order.tx_ref}</span>
+                                    <span className='pr-3'>Order</span> <span className='text-blue-500'>{formatDateTime(order.createdAt)}</span>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <div className="mb-4 px-4">
-                                        <Typography variant="h6" className="font-semibold">Name: {order.tx_ref}</Typography>
+                                        <Typography variant="h6" className="font-semibold">Name: {order.userName}</Typography>
                                         <Typography className="text-gray-400">Restaurant: {order.restaurantName}</Typography>
-                                        <Typography className="text-gray-400">Phone: { }</Typography>
+                                        <Typography className="text-gray-400">Phone: {order.phoneNumber}</Typography>
                                         {order.delivery_instructions.length > 0 && <Typography className='text-gray-400'>Description: {order.delivery_instructions}</Typography>}
                                         <Typography className='text-gray-400'>Payment Status: <span className='text-green-400'>{order.payment_status}</span></Typography>
                                     </div>
