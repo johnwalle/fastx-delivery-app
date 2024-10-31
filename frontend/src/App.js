@@ -71,10 +71,10 @@ function MainContent() {
         {/* <Route path='/create-restaurant' element={<CreateRestaurantPage />} /> */}
 
         {/* Create Menu Page */}
-        <Route path='/create-menu' element={<CreateMenu />} />
+        <Route path='/create-menu' element={isAdmin ? <CreateMenu /> : <LandingPage />} />
 
         {/* Update Restaurant Profile */}
-        <Route path='/update-restaurant' element={<UpdateRestaurant />} />
+        <Route path='/update-restaurant/:restaurantId' element={isSuperAdmin ? <UpdateRestaurant /> : <LandingPage />} />
 
         {/* Update Menu Page */}
         <Route path='/update-menu/:menuItemId' element={isAdmin ? <UpdateMenuItems /> : <LandingPage />} />

@@ -22,12 +22,7 @@ const NAVIGATION = [
         segment: 'menu',
         title: 'Menu Items',
         icon: <Pencil />,
-    },
-    {
-        segment: 'profile',
-        title: 'Restaurant Profile',
-        icon: <AccountBoxIcon />,
-    },
+    }
 ];
 
 const customTheme = createTheme({
@@ -95,6 +90,12 @@ function DemoPageContent({ pathname }) {
         setMenuItems(menuItems); // Sync local state with store state
     }, [menuItems]);
 
+    //logout handler
+
+    const logoutHandler = () => {
+        authStore.getState().clearUserData();
+    };
+
     const deleteMenuItem = async (menuItemId) => {
         try {
             const response = await axios.delete(`${process.env.REACT_APP_API_URL}/menu/delete/${menuItemId}`, {
@@ -113,6 +114,9 @@ function DemoPageContent({ pathname }) {
         }
     };
 
+
+
+    
     return (
         <Box sx={{ py: 4, px: 3 }}>
             {pathname === '/overview' ? (
@@ -135,7 +139,7 @@ function DemoPageContent({ pathname }) {
                             </div>
                         </div>
                         <div class="mt-8">
-                            <button class="py-2 primary text-white rounded-lg focus:outline-none">
+                            <button class="py-2 primary text-white rounded-lg focus:outline-none" onClick={logoutHandler}>
                                 Logout
                             </button>
                         </div>
