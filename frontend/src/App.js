@@ -18,6 +18,8 @@ import SuperAdminPage from './pages/SuperAdminPage'
 import UpdateMenuItems from './pages/UpdateMenuItems';
 import { Superscript } from 'lucide-react';
 import authStore from './store/auth.store';
+import UpdateRestaurant from './pages/UpdateRestaurant';
+import AboutUsPage from './pages/AboutUsPage';
 
 function App() {
   return (
@@ -70,7 +72,10 @@ function MainContent() {
         {/* <Route path='/create-restaurant' element={<CreateRestaurantPage />} /> */}
 
         {/* Create Menu Page */}
-        <Route path='/create-menu' element={<CreateMenu />} />
+        <Route path='/create-menu' element={isAdmin ? <CreateMenu /> : <LandingPage />} />
+
+        {/* Update Restaurant Profile */}
+        <Route path='/update-restaurant/:restaurantId' element={isSuperAdmin ? <UpdateRestaurant /> : <LandingPage />} />
 
         {/* Update Menu Page */}
         <Route path='/update-menu/:menuItemId' element={isAdmin ? <UpdateMenuItems /> : <LandingPage />} />
@@ -79,7 +84,7 @@ function MainContent() {
         <Route path='/checkout' element={<CheckoutPage />} />
 
         {/* Order Confirmation */}
-        <Route path='/order/confirmation' element={<OrderConfirmationPage />} />
+        <Route path='/order/confirmation/:orderID' element={userData ? <OrderConfirmationPage /> : <LandingPage />} />
 
         {/* User Dashboard */}
         <Route path='/dashboard' element={userData ? <UserDashboardPage /> : <LandingPage />} />
@@ -89,6 +94,10 @@ function MainContent() {
 
         {/* SuperAdmin Page */}
         <Route path='/super-admin' element={isSuperAdmin ? <SuperAdminPage /> : <LandingPage />} />
+
+        {/* about us page*/}
+        <Route path='/about' element={<AboutUsPage />} />
+
 
       </Routes>
 

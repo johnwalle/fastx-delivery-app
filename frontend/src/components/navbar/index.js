@@ -7,9 +7,8 @@ import { ShoppingCart } from 'lucide-react';
 import authStore from '../../store/auth.store';
 import cartStore from '../../store/cart.store';
 import useRestaurantStore from '../../store/restaurant.store';
-
 import Cart from '../cart';
-
+import useAdminRestaurantStore from '../../admin/restaurant.store';
 
 const Navbar = () => {
     // State for mobile menu visibility and dropdown visibility
@@ -21,10 +20,14 @@ const Navbar = () => {
 
     // Sample restaurant data
     const { restaurants, fetchRestaurants } = useRestaurantStore();
+    const { restaurantData, fetchRestaurantData } = useAdminRestaurantStore()
+
 
     useEffect(() => {
         fetchRestaurants();
     }, [fetchRestaurants]);
+
+
 
     // Function to get the top 5 restaurants by rating
     const topRestaurants = restaurants
@@ -72,6 +75,17 @@ const Navbar = () => {
 
     const cartItemCount = getCartItemCount();
 
+    // get Admin's resturant data
+
+    useEffect(() => {
+        if (userRole === 'admin') {
+            fetchRestaurantData(userData.tokens.access.token);
+        }
+    }, [fetchRestaurantData, userData, userRole]);
+
+
+
+
     return (
         <nav className={navClassName}>
             <div className="pr-6">
@@ -87,35 +101,45 @@ const Navbar = () => {
                         </a>
 
                         {/* Desktop navigation links */}
-                        <div className="hidden md:block ml-5 relative">
-                            <div
-                                className="relative"
-                                onMouseEnter={() => setShowDropdown(true)}
-                                onMouseLeave={() => setShowDropdown(false)}
-                            >
-                                <NavLink>Restaurants</NavLink>
-                                {/* Dropdown Menu */}
-                                {showDropdown && (
-                                    <div className="absolute left-[70px] mt-2 w-48 bg-white shadow-3xl rounded-md">
-                                        {topRestaurants.map((restaurant) => (
-                                            <Link
-                                                key={restaurant._id}
-                                                to={`restaurant/${restaurant._id}`}
-                                                className="block line-clamp-1 text-sm px-4 py-2 text-red-500 hover:text-red-300"
-                                            >
-                                                {restaurant.name}
-                                            </Link>
-                                        ))}
-                                        <Link
-                                            to="/restaurants"
-                                            className="block text-sm px-4 py-2 text-blue-500 hover:text-blue-300 mt-2 border-t border-gray-200"
-                                        >
-                                            All Restaurants
-                                        </Link>
+                        {
+                            userRole === 'admin' ? (
+                                <div className="hidden md:block ml-5 relative">
+                                    <NavLink to={`/restaurant/${restaurantData?._id}`}>
+                                        My Restaurant
+                                    </NavLink>
+                                </div>
+                            ) : (
+                                <div className="hidden md:block ml-5 relative">
+                                    <div
+                                        className="relative"
+                                        onMouseEnter={() => setShowDropdown(true)}
+                                        onMouseLeave={() => setShowDropdown(false)}
+                                    >
+                                        <NavLink>Restaurants</NavLink>
+                                        {showDropdown && (
+                                            <div className="absolute left-[70px] mt-2 w-48 bg-white shadow-3xl rounded-md">
+                                                {topRestaurants.map((restaurant) => (
+                                                    <Link
+                                                        key={restaurant._id}
+                                                        to={`restaurant/${restaurant._id}`}
+                                                        className="block line-clamp-1 text-sm px-4 py-2 text-red-500 hover:text-red-300"
+                                                    >
+                                                        {restaurant.name}
+                                                    </Link>
+                                                ))}
+                                                <Link
+                                                    to="/restaurants"
+                                                    className="block text-sm px-4 py-2 text-blue-500 hover:text-blue-300 mt-2 border-t border-gray-200"
+                                                >
+                                                    All Restaurants
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </div>
+                                </div>
+                            )
+                        }
+
                     </div>
 
                     <div className="flex items-center">
@@ -160,30 +184,33 @@ const Navbar = () => {
                         {/* Links based on user authentication */}
                         {userData ? (
                             <div className="flex">
-                                <div>
-                                    <div className="flex gap-2 items-center cursor-pointer" onClick={handleClick}>
-                                        <ShoppingCart className="text-white" />
-                                        {(cartItemCount > 0 || cartLength > 0) && (
-                                            <label className="bg-slate-200 rounded-full p-1 px-3 cursor-pointer">
-                                                {cartItemCount || cartLength}
-                                            </label>
-                                        )}
-                                    </div>
-                                    <Popover
-                                        id={id}
-                                        open={open}
-                                        anchorEl={anchorEl}
-                                        onClose={handleClose}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'left',
-                                        }}
-                                    >
-                                        <Typography sx={{ p: 2 }}>
-                                            <Cart />
-                                        </Typography>
-                                    </Popover>
-                                </div>
+
+
+                                {userRole === 'user' && (
+                                    <div>
+                                        <div className="flex gap-2 items-center cursor-pointer" onClick={handleClick}>
+                                            <ShoppingCart className="text-white" />
+                                            {(cartItemCount > 0 || cartLength > 0) && (
+                                                <label className="bg-slate-200 rounded-full p-1 px-3 cursor-pointer">
+                                                    {cartItemCount || cartLength}
+                                                </label>
+                                            )}
+                                        </div>
+                                        <Popover
+                                            id={id}
+                                            open={open}
+                                            anchorEl={anchorEl}
+                                            onClose={handleClose}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'left',
+                                            }}
+                                        >
+                                            <Typography sx={{ p: 2 }}>
+                                                <Cart />
+                                            </Typography>
+                                        </Popover>
+                                    </div>)}
 
                                 <div className="hidden md:block">
                                     <div className="ml-4 flex items-center md:ml-6">
@@ -221,53 +248,88 @@ const Navbar = () => {
                             </div>
                         )}
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
 
             {/* Mobile menu */}
             <div className={`md:hidden ${showMenu ? 'block' : 'hidden'}`}>
-                <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <div className="flex justify-center items-center flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     {userData ? (
                         <>
-                            <button onClick={() => setShowMenu(false)}>
-                                <NavLink to="/restaurants">Restaurants</NavLink>
-                            </button>
+                            {/* User Role: Admin */}
+                            {userRole === 'admin' ? (
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="text-left text-blue-600 hover:underline px-2 py-1"
+                                >
+                                    <NavLink to={`/restaurants/${restaurantData?._id}`}>
+                                        My Restaurant
+                                    </NavLink>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="text-left text-blue-600 hover:underline px-2 py-1"
+                                >
+                                    <NavLink to="/restaurants">Restaurants</NavLink>
+                                </button>
+                            )}
+
+                            {/* Conditional Dashboard Link */}
                             {!(userRole === 'admin' || userRole === 'super-admin') && (
-                                <button onClick={() => setShowMenu(false)}>
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="text-left text-blue-600 hover:underline px-2 py-1"
+                                >
                                     <NavLink to="/dashboard">Dashboard</NavLink>
                                 </button>
                             )}
 
-
-
-                            {/* Conditional Admin/Super Admin Links */}
+                            {/* Admin/Super Admin Links */}
                             {userRole === 'admin' && (
-                                <button onClick={() => setShowMenu(false)}>
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="text-left text-blue-600 hover:underline px-2 py-1"
+                                >
                                     <NavLink to="/admin">Admin</NavLink>
                                 </button>
                             )}
                             {userRole === 'super-admin' && (
-                                <button onClick={() => setShowMenu(false)}>
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="text-left text-blue-600 hover:underline px-2 py-1"
+                                >
                                     <NavLink to="/super-admin">Super Admin</NavLink>
                                 </button>
                             )}
                         </>
                     ) : (
                         <>
-                            <button onClick={() => setShowMenu(false)}>
+                            {/* Links for Unauthenticated Users */}
+                            <button
+                                onClick={() => setShowMenu(false)}
+                                className="text-left text-blue-600 hover:underline px-2 py-1"
+                            >
                                 <NavLink to="/restaurants">Restaurants</NavLink>
                             </button>
-                            <button onClick={() => setShowMenu(false)}>
+                            <button
+                                onClick={() => setShowMenu(false)}
+                                className="text-left text-blue-600 hover:underline px-2 py-1"
+                            >
                                 <NavLink to="/login">Login</NavLink>
                             </button>
-                            <button onClick={() => setShowMenu(false)}>
+                            <button
+                                onClick={() => setShowMenu(false)}
+                                className="text-left text-blue-600 hover:underline px-2 py-1"
+                            >
                                 <NavLink to="/signup">Sign Up</NavLink>
                             </button>
                         </>
                     )}
                 </div>
             </div>
-        </nav>
+
+        </nav >
     );
 };
 

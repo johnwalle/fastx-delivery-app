@@ -1,6 +1,8 @@
 import React from 'react'
 
 function ItemsOrdered({ order }) {
+
+    console.log("itemsOrders", order);
     return (
         <div>
             <h3 className="mt-4 text-lg font-semibold">Items Ordered</h3>
@@ -11,7 +13,7 @@ function ItemsOrdered({ order }) {
                         <div className='text-lg text-red-500'>Quantity</div>
                         <div className='text-lg text-red-500'>Price</div>
                     </div>
-                    {order.items.map((item, index) => (
+                    {order.OrderItems.map((item, index) => (
                         <div className='flex justify-between mb-1'>
                             <div className="flex gap-2 items-center w-1/2">
                                 <img
@@ -23,8 +25,8 @@ function ItemsOrdered({ order }) {
                                 />
                                 <div className="text-sm text-white break-words w-1/2">{item.ItemName}</div>
                             </div>
-                            <div className='flex-shrink-0 text-right w-[50px]'>{item.quantity}</div>
-                            <div className='text-right w-[80px] flex-shrink-0'>${item.price}</div>
+                            {/* <div className='flex-shrink-0 text-right w-[50px]'>{item.quantity}</div>
+                            <div className='text-right w-[80px] flex-shrink-0'>${item.price}</div> */}
                         </div>
                     ))}
                     <hr className='mt-2' />

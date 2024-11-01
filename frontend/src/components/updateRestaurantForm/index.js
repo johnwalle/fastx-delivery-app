@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import useCreateRestaurant from '../../hooks/useCreateRestaurant';
 import AddressForm from '../adressForm';
 import authStore from '../../store/auth.store';
-import useAdminRestaurantStore from '../../admin/restaurant.store';
 import useUpdateRestaurant from '../../admin/hooks/useUpdateRestaurant';
+import useRestaurantStore from '../../store/restaurant.store';
 
-function UpdateRestaurantForm() {
+function UpdateRestaurantForm({ restaurantId }) {
     const { userData } = authStore();
-    const token = userData?.tokens?.access?.token || null;
 
-    const { restaurantData, loading, fetchRestaurantData } = useAdminRestaurantStore();
+    const { fetchSingleRestaurant, restaurant } = useRestaurantStore();
 
-    console.log("restaurant dddddddddddddata", restaurantData)
+    console.log("restaurant dddddddddddddata", restaurant)
     const [formData, setFormData] = useState({
         name: '',
         cuisine_types: [],
@@ -54,37 +53,37 @@ function UpdateRestaurantForm() {
     };
 
     useEffect(() => {
-        fetchRestaurantData(token);
-    }, [token]);
+        fetchSingleRestaurant(restaurantId);
+    }, [restaurantId]);
 
     useEffect(() => {
-        if (restaurantData) {
+        if (restaurant) {
             setFormData({
-                name: restaurantData.name,
-                cuisine_types: restaurantData.cuisine_types,
-                description: restaurantData.description,
+                name: restaurant.name,
+                cuisine_types: restaurant.cuisine_types,
+                description: restaurant.description,
                 address: {
-                    street: restaurantData.address.street,
-                    city: restaurantData.address.city,
-                    state: restaurantData.address.state,
-                    country: restaurantData.address.country,
+                    street: restaurant.address?.street,
+                    city: restaurant.address?.city,
+                    state: restaurant.address?.state,
+                    country: restaurant.address?.country,
                 },
                 location: {
-                    latitude: restaurantData.location.latitude,
-                    longitude: restaurantData.location.longitude,
+                    latitude: restaurant.location?.latitude,
+                    longitude: restaurant.location?.longitude,
                 },
-                working_days: restaurantData.working_days,
-                phone_number: restaurantData.phone_number.slice(4),
+                working_days: restaurant.working_days,
+                phone_number: restaurant.phone_number?.slice(4),
                 operating_hours: {
-                    open: restaurantData.operating_hours.open,
-                    close: restaurantData.operating_hours.close,
+                    open: restaurant.operating_hours?.open,
+                    close: restaurant.operating_hours?.close,
                 },
             });
-            if (restaurantData.image) {
-                setImagePreview(restaurantData.image);
+            if (restaurant.image) {
+                setImagePreview(restaurant.image);
             }
         }
-    }, [restaurantData]);
+    }, [restaurant]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -134,21 +133,23 @@ function UpdateRestaurantForm() {
     };
 
 
-    console.log('fffforrrm data', formData)
+    console.log('fffforrrm data', formData);
 
     const { updateRestaurant, isLoading, SnackbarComponent } = useUpdateRestaurant();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log('save change clicked')
+
         if (!validateStep()) return;
 
         const fullPhoneNumber = `+251${formData.phone_number}`;
 
         const { name, cuisine_types, description, address, working_days, operating_hours, location, image } = formData;
-        const restaurantID = restaurantData._id;
+        const restaurantID = restaurant._id;
 
-        
+
         try {
             await updateRestaurant({
                 restaurantID,
@@ -216,7 +217,7 @@ function UpdateRestaurantForm() {
                     type="text"
                     name="cuisine_types"
                     id="cuisine_types"
-                    value={formData.cuisine_types.join(', ')}
+                    value={formData?.cuisine_types?.join(', ')}
                     onChange={(e) =>
                         setFormData((prevState) => ({
                             ...prevState,
@@ -277,7 +278,7 @@ function UpdateRestaurantForm() {
                 {errors.working_days && <p className="text-red-500 text-sm mb-2">{errors.working_days}</p>}
             </div>
             <div className="mb-4">
-                {formData.working_days.length > 0 && (
+                {formData?.working_days?.length > 0 && (
                     <div className="bg-gray-100 p-4 rounded-md shadow-md">
                         <h4 className="text-lg text-[#A40C0C]  font-semibold mb-2">Selected Working Days</h4>
                         <div className="flex flex-wrap gap-2">
@@ -364,7 +365,7 @@ function UpdateRestaurantForm() {
 
                         type="time"
                         name="open"
-                        value={formData.operating_hours.open}
+                        value={formData.operating_hours?.open}
                         onChange={(e) =>
                             setFormData((prevState) => ({
                                 ...prevState,
@@ -379,7 +380,7 @@ function UpdateRestaurantForm() {
                     <input
                         type="time"
                         name="close"
-                        value={formData.operating_hours.close}
+                        value={formData.operating_hours?.close}
                         onChange={(e) =>
                             setFormData((prevState) => ({
                                 ...prevState,

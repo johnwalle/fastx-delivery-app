@@ -6,9 +6,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import fastXLogo from '../../assets/fastX-logo.png';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
 import { Link } from 'react-router-dom';
-import UpdateRestaurantForm from '../../components/updateRestaurantForm';
 import useAdminRestaurantStore from '../../admin/restaurant.store';
 import useAdminMenuStore from '../../admin/menu.store';
 import authStore from '../../store/auth.store';
@@ -24,12 +22,7 @@ const NAVIGATION = [
         segment: 'menu',
         title: 'Menu Items',
         icon: <Pencil />,
-    },
-    {
-        segment: 'profile',
-        title: 'Restaurant Profile',
-        icon: <AccountBoxIcon />,
-    },
+    }
 ];
 
 const customTheme = createTheme({
@@ -81,12 +74,6 @@ function DemoPageContent({ pathname }) {
 
     console.log("menuItemssssssssssss", menuItemsState);
 
-
-    const logoutHandler = () => {
-        authStore.getState().clearUserData();
-    };
-
-
     // Fetch the restaurant data on component mount
     useEffect(() => {
         fetchRestaurantData(token);
@@ -102,6 +89,12 @@ function DemoPageContent({ pathname }) {
     useEffect(() => {
         setMenuItems(menuItems); // Sync local state with store state
     }, [menuItems]);
+
+    //logout handler
+
+    const logoutHandler = () => {
+        authStore.getState().clearUserData();
+    };
 
     const deleteMenuItem = async (menuItemId) => {
         try {
@@ -121,6 +114,9 @@ function DemoPageContent({ pathname }) {
         }
     };
 
+
+
+    
     return (
         <Box sx={{ py: 4, px: 3 }}>
             {pathname === '/overview' ? (
@@ -205,15 +201,6 @@ function DemoPageContent({ pathname }) {
                         </Link>
                     </div>
                 </div>
-            ) : pathname === '/profile' ? (
-                <Typography>
-                    <div className="pt-10 pb-7">
-                        <div className="max-w-3xl mx-auto p-6 py-10 bg-white shadow-md rounded-lg">
-                            <h1 className="text-2xl text-[#A40C0C] tes font-bold mb-4">Restaurant Profile</h1>
-                            <UpdateRestaurantForm />
-                        </div>
-                    </div>
-                </Typography>
             ) : null}
         </Box>
     );

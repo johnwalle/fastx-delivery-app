@@ -29,7 +29,7 @@ const useUpdateRestaurant = () => {
         }
     ) => {
         // Log the received values to ensure correct order
-        console.log('Updated form values:', {
+        console.log('Updated shek form values:', {
             restaurantID,
             name,
             cuisine_types,
@@ -77,7 +77,6 @@ const useUpdateRestaurant = () => {
             if (response.status === 200) {
                 setError(null);
                 setOpen(true);
-                navigate('/admin'); // Redirect to admin page after successful update
                 console.log('Menu item updated successfully:', response.data);
             } else {
                 setError(`Unexpected response status: ${response.status}`);
