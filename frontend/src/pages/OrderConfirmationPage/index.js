@@ -1,26 +1,40 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import MyOrder from '../../components/myOrder';
 import burger from './assets/burger.png'
 import ItemsOrdered from '../../components/itemsOrdered';
 import OrderSummary from '../../components/orderSummary';
+import { useParams } from 'react-router-dom'
+import authStore from '../../store/auth.store';
+import orderStore from '../../store/order.store';
 
 function OrderConfirmationPage() {
-    const order = {
-        orderNumber: '123456',
-        orderDate: 'September 9, 2024, 12:45 PM',
-        items: [
-            { ItemName: 'Burger Deluxe', quantity: 1, price: 8.99, ItemImage: burger },
-            { ItemName: 'Fries', quantity: 2, price: 4.99, ItemImage: burger },
-            { ItemName: 'Chocolate Milkshake', quantity: 1, price: 5.99, ItemImage: burger },
-        ],
-        subtotal: 19.97,
-        deliveryFee: 3.0,
-        tax: 2.5,
-        total: 25.47,
-        address: '123 Main Street, Apt 5, Springfield, IL',
-        estimatedTime: '30-40 minutes',
-        paymentMethod: 'Credit Card ending in 1234',
-    };
+    // const order = {
+    //     orderNumber: '123456',
+    //     orderDate: 'September 9, 2024, 12:45 PM',
+    //     items: [
+    //         { ItemName: 'Burger Deluxe', quantity: 1, price: 8.99, ItemImage: burger },
+    //         { ItemName: 'Fries', quantity: 2, price: 4.99, ItemImage: burger },
+    //         { ItemName: 'Chocolate Milkshake', quantity: 1, price: 5.99, ItemImage: burger },
+    //     ],
+    //     subtotal: 19.97,
+    //     deliveryFee: 3.0,
+    //     tax: 2.5,
+    //     total: 25.47,
+    //     address: '123 Main Street, Apt 5, Springfield, IL',
+    //     estimatedTime: '30-40 minutes',
+    //     paymentMethod: 'Credit Card ending in 1234',
+    // };
+    const { orderID } = useParams();
+
+    const userData = authStore();
+    const { getOrderById, order } = orderStore();
+
+    const token = userData?.tokens?.access?.token
+
+
+    useEffect(() => {
+        getOrderById(token, orderID)
+    }, [token, orderID])
 
     return (
         <div className='max-w-3xl mx-auto pt-24 pb-5'>

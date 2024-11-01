@@ -14,7 +14,7 @@ function OrderSummary({ order }) {
                 <div className="mt-8">
                     <h3 className="text-lg font-semibold">Delivery Information</h3>
                     <p className="mt-2"><strong>Address:</strong> {order.address}</p>
-                    <p><strong>Estimated Delivery Time:</strong> {order.estimatedTime}</p>
+                    <p><strong>Estimated Delivery Time:</strong>30-40 minutes</p>
                 </div>
             </div>
         </div>

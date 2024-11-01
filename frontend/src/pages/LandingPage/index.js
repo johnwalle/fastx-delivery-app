@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 import { motion } from 'framer-motion';
 import burgerbliss from '../AllRestaurantsPage/assets/burger-bliss.png';
 import star from '../AllRestaurantsPage/assets/star.png';
 import { Link } from 'react-router-dom';
+import useRestaurantStore from '../../store/restaurant.store';
 
 
 const LandingPage = () => {
@@ -23,8 +24,6 @@ const LandingPage = () => {
     ]);
 
 
-
-
     const toggleFAQ = (id) => {
         setFaqs((prevFaqs) => {
             const updatedFaqs = prevFaqs.map((faq) =>
@@ -34,13 +33,18 @@ const LandingPage = () => {
         });
     };
 
+    const { restaurants, fetchRestaurants } = useRestaurantStore();
 
-    const restaurants = [
-        { name: "The Spicy Spoon", rating: 4.5, cuisine: ["Indian", "Thai"], _id: "13245" },
-        { name: "Pasta Paradise", rating: 4.7, cuisine: ["Italian", "Mediterranean"], _id: "13246" },
-        { name: "Sushi Supreme", rating: 4.8, cuisine: ["Japanese"], _id: "13247" },
-    ];
+    const query = `sort=highly_rated`
 
+    useEffect(() => {
+        fetchRestaurants(query);
+    }, [])
+
+
+
+
+    const featuredRestaurants = restaurants.slice(0, 3)
 
     return (
         <div className='pt-14'>
@@ -163,7 +167,7 @@ const LandingPage = () => {
                 </motion.h2>
 
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center gap-5 px-5">
-                    {restaurants.map((item, index) => (
+                    {featuredRestaurants?.map((item, index) => (
                         <motion.div
                             key={index}
                             className="p-4 rounded-lg bg-white flex flex-col items-start shadow-md"
@@ -172,7 +176,7 @@ const LandingPage = () => {
                             transition={{ duration: 1.6, ease: 'easeOut' }} // Smooth transition effect
                         >
                             <img
-                                src={burgerbliss} // Replace with the actual restaurant image if available
+                                src={item.image} // Replace with the actual restaurant image if available
                                 alt={item.name}
                                 className="h-[200px] w-full object-cover rounded-xl"
                             />
@@ -186,7 +190,7 @@ const LandingPage = () => {
                                         <label className="text-gray-500 text-sm ml-2">{item.rating}</label>
                                     </div>
                                     <div className="flex flex-wrap gap-1 px-6 mt-1">
-                                        {item.cuisine.map((cuisine, index) => (
+                                        {item.cuisine_types.map((cuisine, index) => (
                                             <span key={index} className="text-sm text-white px-2 py-1 bg-blue-500 rounded-lg">
                                                 {cuisine}
                                             </span>
