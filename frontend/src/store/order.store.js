@@ -25,18 +25,20 @@ const orderStore = create((set, get) => ({
             set({ loading: false });
         }
     },
-
     //get order by id
     getOrderById: async (token, orderID) => {
+        
         set({ loading: true });
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/${orderID}`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/order/get/${orderID}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log('Order:', response.data);
+
+            console.log('Order:', response.data);      
             if (response.status === 200) {
                 set({ order: response.data.data.order });
             }
+
         } catch (error) {
             console.error('Error while fetching an order:', error);
             set({ error: error.response?.data?.message || error.message });

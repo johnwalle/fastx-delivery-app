@@ -84,7 +84,7 @@ function MainContent() {
         <Route path='/checkout' element={<CheckoutPage />} />
 
         {/* Order Confirmation */}
-        <Route path='/order/confirmation/:orderID' element={<OrderConfirmationPage />} />
+        <Route path='/order/confirmation/:orderID' element={userData ? <OrderConfirmationPage /> : <LandingPage />} />
 
         {/* User Dashboard */}
         <Route path='/dashboard' element={userData ? <UserDashboardPage /> : <LandingPage />} />
