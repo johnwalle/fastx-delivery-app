@@ -11,7 +11,7 @@ const useCheckout = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const checkout = async (note) => {
+    const checkout = async (note, location, specifics) => {
         if (!token) {
             setError("Authentication token is missing. Please log in.");
             return;
@@ -21,7 +21,12 @@ const useCheckout = () => {
             setIsLoading(true);
             const response = await axios.post(
                 `${process.env.REACT_APP_API_URL}/checkout`,
-                { delivery_instructions: note },
+                { delivery_instructions: note,
+                  address: {
+                    location: location,
+                    specific_address: specifics
+                  }
+                 },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

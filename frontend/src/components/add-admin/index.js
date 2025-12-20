@@ -34,7 +34,16 @@ function AddAdminUser() {
     setLocalError("");
 
     try {
-      await addAdmin(formData); // send full data to the hook
+      const response = await addAdmin(formData); // send full data to the hook
+      if (response.status === 201) {
+        setFormData({
+          fullName: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+          confirmPassword: "",
+        });
+      }
     } catch (err) {
       console.error("Add Admin error:", err);
     }

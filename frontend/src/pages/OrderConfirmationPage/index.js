@@ -22,9 +22,9 @@ function OrderConfirmationPage() {
     return (
         <div className='max-w-3xl mx-auto pt-24 pb-5'>
             <div className='text-center'>
-                <i className="text-green-500 text-5xl">✔</i>
-                <h1 className="text-3xl font-bold mt-4">Order Confirmed!</h1>
-                <p className="text-green-600 mt-2">Thank you for your order. Your delicious food is being prepared!</p>
+                <i className="text-green-500 text-2xl md:text-5xl">✔</i>
+                <h1 className="text-xl md:text-3xl font-bold mt-4">Order Confirmed!</h1>
+                <p className="text-green-600 mt-2 text-sm md:text-md">Thank you for your order. Your delicious food is being prepared!</p>
             </div>
             <OrderSummary order={order} />
             <ItemsOrdered order={order} />
@@ -39,7 +39,7 @@ function ItemsOrdered({ order }) {
     }
 
     return (
-        <div>
+        <div className='px-5 lg:px-0'>
         <h3 className="mt-4 text-lg font-semibold">Items Ordered</h3>
         <div className='border border-white rounded-lg mt-2 p-5 text-white'>
             <div>
@@ -65,9 +65,9 @@ function ItemsOrdered({ order }) {
                     </div>
                 ))}
                 <hr className='mt-2' />
-                <div className='mt-3 flex justify-end'><span className='text-blue-500 mr-1'>Subtotal:</span>Birr {order.total_amount.toFixed(2)}</div>
-                <div className='mt-3 flex justify-end'><span className='text-blue-500 mr-1'>Delivery Fee:</span> Birr {order.delivery_fee.toFixed(2)}</div>
                 <div className='mt-3 flex justify-end'><span className='text-blue-500 mr-1'>Grand total:</span>Birr {order.total_price.toFixed(2)}</div>
+                <div className='mt-3 flex justify-end'><span className='text-blue-500 mr-1'>Delivery Fee:</span> Birr {order.delivery_fee.toFixed(2)}</div>
+                <div className='mt-3 flex justify-end'><span className='text-blue-500 mr-1'>Subtotal:</span>Birr {order.total_amount.toFixed(2)}</div>
             </div>
         </div>
     </div>

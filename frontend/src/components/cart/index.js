@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import cartStore from '../../store/cart.store';
 import authStore from '../../store/auth.store';
 
-function Cart() {
+function Cart({onClose}) {
     const { userData } = authStore((state) => ({
         userData: state.userData,
     }));
@@ -91,7 +91,7 @@ function Cart() {
                 ))}
             </div>
             <Link to={`/checkout?restaurant=${cart.items[0]?.restaurant}`}>
-                <button className="primary w-full mt-5">
+                <button onClick={onClose} className="primary w-full mt-5">
                     Checkout ${cart.totalPrice.toFixed(2)}
                 </button>
             </Link>

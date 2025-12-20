@@ -81,7 +81,7 @@ const MenuItemForm = () => {
         } = formData;
 
         try {
-            await createMenu({
+            const response = await createMenu({
                 name,
                 description,
                 price,
@@ -89,6 +89,17 @@ const MenuItemForm = () => {
                 image,
                 restaurantEmail
             });
+            if(response.status === 201){
+                // Reset form on successful submission
+                setFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: '',
+                    image: null,
+                    restaurantEmail: ''
+                });
+            }
         } catch (error) {
             console.error('Error creating menu item:', error);
         }

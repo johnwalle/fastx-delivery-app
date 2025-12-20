@@ -14,6 +14,7 @@ const Navbar = () => {
     // State for mobile menu visibility and dropdown visibility
     const [showMenu, setShowMenu] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     // Toggle mobile menu
     const toggleMenu = () => setShowMenu(!showMenu);
@@ -207,7 +208,7 @@ const Navbar = () => {
                                             }}
                                         >
                                             <Typography sx={{ p: 2 }}>
-                                                <Cart />
+                                                <Cart onClose={handleClose}/>
                                             </Typography>
                                         </Popover>
                                     </div>)}

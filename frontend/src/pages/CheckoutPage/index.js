@@ -7,6 +7,8 @@ import useCheckout from '../../hooks/useCheckout';
 function CheckoutPage() {
     // State to hold the value of the text area in OrderNote
     const [note, setNote] = useState('');
+    const [location, setLocation] = useState('');
+    const [specifics, setSpecifics] = useState('');
 
     // Handler function to update the note value
     const handleNoteChange = (value) => {
@@ -19,13 +21,18 @@ function CheckoutPage() {
     // Function to handle checkout button click
     const handleCheckout = () => {
         console.log('note:', note);
-        checkout(note); // Pass the note to the checkout function if needed
+        checkout(note, location, specifics); // Pass the note to the checkout function if needed
     };
 
     return (
         <div className="pl-4 pr-4 pt-14 pb-5 lg:pl-80 lg:pr-60 lg:pt-24 lg:pb-5">
             <div className="py-14">
-                <Location />
+                <Location 
+                location={location} 
+                setLocation={setLocation}
+                specifics={specifics} 
+                setSpecifics={setSpecifics}
+                />
             </div>
             <div className="grid md:grid-cols-4 items-end gap-4 grid-cols-1">
                 <div className="col-span-3">

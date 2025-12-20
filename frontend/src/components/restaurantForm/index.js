@@ -126,7 +126,7 @@ const RestaurantForm = () => {
         } = formData;
 
         try {
-            await createRestaurant({
+            const response = await createRestaurant({
                 name,
                 email,
                 cuisine_types,
@@ -138,6 +138,32 @@ const RestaurantForm = () => {
                 location,
                 image,
             });
+            if(response.status === 201){
+                // Reset form on successful creation
+                setFormData({
+                    name: '',
+                    email: '',
+                    cuisine_types: [],
+                    description: '',
+                    address: {
+                        street: '',
+                        city: '',
+                        state: '',
+                        country: 'Ethiopia',
+                    },
+                    location: {
+                        latitude: '',
+                        longitude: '',
+                    },
+                    working_days: [],
+                    phone_number: '',
+                    image: null,
+                    operating_hours: {
+                        open: '',
+                        close: '',
+                    },
+                });
+            } 
         } catch (error) {
             console.error('Error creating restaurant:', error);
         }

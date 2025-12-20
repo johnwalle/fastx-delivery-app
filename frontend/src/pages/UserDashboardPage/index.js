@@ -77,101 +77,101 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#330000] to-[#550000] text-white font-sans">
-      {/* Sidebar */}
-      <div
-        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          } fixed md:static z-20 w-64 bg-[#a10000] transition-transform duration-300 flex flex-col`}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-red-800">
-          <div className="flex items-center gap-2">
-            <a href="/">
-              <img
-                src={fastX_logo}
-                alt="fastX logoX"
-                className="w-32 h-auto md:w-40"
-              />
-            </a>
-          </div>
-          <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
-            ✕
-          </button>
-        </div>
-
-        <nav className="flex-1 mt-4 space-y-1">
-          {menuItems.map(({ name, icon: Icon }) => (
-            <motion.button
-              key={name}
-              whileHover={{ scale: 1.05 }}
-              className={`flex items-center gap-3 w-full px-5 py-3 text-left transition-all ${active === name ? "bg-red-700 font-semibold" : "hover:bg-red-800"
-                }`}
-              onClick={() => setActive(name)}
-            >
-              <Icon size={20} />
-              {name}
-            </motion.button>
-          ))}
-        </nav>
-
-        <LogoutButton />
+  {/* Sidebar - Fixed on desktop, overlay on mobile */}
+  <div
+    className={`${
+      sidebarOpen ? "translate-x-0" : "-translate-x-full"
+    } fixed inset-y-0 left-0 z-20 w-64 bg-[#a10000] flex flex-col transition-transform duration-300 md:translate-x-0`}
+  >
+    <div className="flex items-center justify-between p-4 border-b border-red-800">
+      <div className="flex items-center gap-2">
+        <a href="/">
+          <img
+            src={fastX_logo}
+            alt="fastX logo"
+            className="w-32 h-auto md:w-40"
+          />
+        </a>
       </div>
+      <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
+        ✕
+      </button>
+    </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6 md:p-10 relative">
-        <button
-          className="md:hidden absolute top-4 left-4"
-          onClick={() => setSidebarOpen(true)}
+    <nav className="flex-1 mt-4 space-y-1 overflow-y-auto px-3">
+      {menuItems.map(({ name, icon: Icon }) => (
+        <motion.button
+          key={name}
+          whileHover={{ scale: 1.05 }}
+          className={`flex items-center gap-3 w-full px-5 py-3 text-left transition-all rounded-md ${
+            active === name ? "bg-red-700 font-semibold" : "hover:bg-red-800"
+          }`}
+          onClick={() => {
+            setActive(name);
+            setSidebarOpen(false); // Auto-close on mobile after selection
+          }}
         >
-          <Menu size={24} />
-        </button>
-        {/* 
-        {active === "Dashboard" && 
-          <motion.div
+          <Icon size={20} />
+          {name}
+        </motion.button>
+      ))}
+    </nav>
+
+    <div className="p-4 border-t border-red-800">
+      <LogoutButton />
+    </div>
+  </div>
+
+  {/* Main Content Area - Scrollable, flush against sidebar */}
+  <div className="flex-1 md:ml-64 min-h-screen">
+    <div className="p-6 md:p-10">
+      {/* Mobile Hamburger Menu */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-30 bg-red-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* My Orders Section */}
+      {active === "My Orders" && (
+        <motion.div
           key={active}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mt-10"
+          className="mt-10 md:mt-0"
         >
-          <CustomerDashboard />
-        </motion.div>
-        } */}
+          <h2 className="text-3xl font-bold mb-3">{active}</h2>
+          <p className="text-gray-300 mb-6">
+            Here is your <span className="text-red-400">{active}</span> summary and recent activity.
+          </p>
 
-        {active === "My Orders" &&
-          <motion.div
-            key={active}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mt-10"
-          >
-            <h2 className="text-3xl font-bold mb-3">{active}</h2>
-            <p className="text-gray-300 mb-6">
-              Here is your <span className="text-red-400">{active}</span> summary and recent activity.
-            </p>
-
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {myOrders.length !== 0 ? myOrders?.map((order, index) => (
-                <div key={index} className="p-4 border border-gray-300 rounded-lg shadow-sm">
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {myOrders.length !== 0 ? (
+              myOrders?.map((order, index) => (
+                <div key={index} className="p-4 border border-gray-300 rounded-lg shadow-sm bg-white/5 backdrop-blur">
                   <h3 className="text-lg font-semibold">{order.restaurantName}</h3>
-                  <p className="text-gray-600">Date: {formatDateToReadable(order.createdAt)}</p>
+                  <p className="text-gray-400">Date: {formatDateToReadable(order.createdAt)}</p>
                   <p
-                    className={`mt-1 ${order.status === 'Delivered'
-                      ? 'text-green-500'
-                      : order.status === 'Canceled'
-                        ? 'text-red-500'
-                        : 'text-yellow-500'
-                      }`}
+                    className={`mt-1 font-medium ${
+                      order.order_status === 'Delivered'
+                        ? 'text-green-400'
+                        : order.order_status === 'Canceled'
+                          ? 'text-red-400'
+                          : 'text-yellow-400'
+                    }`}
                   >
                     Status: {order.order_status}
                   </p>
                   <div className="mt-4 flex space-x-4">
                     <Button
-                      aria-describedby={id}
                       variant="contained"
-                      onClick={(event) => handleClick(event, order)} // Pass the order to handleClick
+                      onClick={(event) => handleClick(event, order)}
                     >
                       View Details
                     </Button>
+
                     <Popover
                       id={id}
                       open={open}
@@ -182,60 +182,57 @@ export default function Dashboard() {
                         horizontal: 'left',
                       }}
                     >
-                      {selectedOrder && ( // Display details of selected order
-                        <div className="p-4 min-w-[250px] flex flex-col">
+                      {selectedOrder && (
+                        <div className="p-4 min-w-[300px] bg-gray-900 text-white">
                           <h3 className="text-lg text-red-500 font-bold mb-4">Order Details</h3>
                           <div className="mb-4">
                             {selectedOrder.OrderItems.map((item, index) => (
-                              <div key={index} className="flex text-gray-900 justify-between py-2">
-                                <span>{item.ItemName} X{item.quantity}</span>
+                              <div key={index} className="flex justify-between py-2">
+                                <span>{item.ItemName} ×{item.quantity}</span>
                                 <span>{item.price} Birr</span>
                               </div>
                             ))}
                           </div>
-                          <div className="flex justify-between py-2 font-semibold text-red-600">
+                          <div className="flex justify-between py-2 font-semibold text-red-400">
                             <span>Delivery Fee:</span>
                             <span>{selectedOrder.delivery_fee} Birr</span>
                           </div>
-                          <div className="flex justify-between py-2 font-semibold text-red-600">
-                            <span>Total Price:</span>
+                          <div className="flex justify-between py-2 font-bold text-xl text-red-400">
+                            <span>Total:</span>
                             <span>{selectedOrder.total_amount} Birr</span>
                           </div>
                         </div>
                       )}
                     </Popover>
-                    {/* <button className="bg-green-500 text-white py-1 px-4 rounded-lg hover:bg-green-600">
-                      Reorder
-                    </button> */}
                   </div>
                 </div>
-              )) :
-                <div className="flex flex-col items-center justify-center text-center bg-[#220000] text-white rounded-2xl border border-red-800 shadow-lg p-10 max-w-md mx-auto mt-20">
-                  <div className="bg-red-900/30 p-6 rounded-full mb-6">
-                    <PackageOpen size={60} className="text-red-400" />
-                  </div>
-
-                  <h2 className="text-2xl font-semibold mb-2">No Orders Yet</h2>
-                  <p className="text-gray-400 mb-6">
-                    Looks like you haven’t placed any orders yet.
-                    Explore delicious meals and order your first dish today!
-                  </p>
-
-                  <button
-                    onClick={() => (window.location.href = "/restaurants")}
-                    className="flex items-center gap-2 bg-red-700 hover:bg-red-600 px-6 py-3 rounded-full text-white font-medium transition-all"
-                  >
-                    <ShoppingBag size={18} />
-                    Order Now
-                  </button>
+              ))
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center text-center bg-[#220000]/50 backdrop-blur rounded-2xl border border-red-800 shadow-lg p-10 max-w-2xl mx-auto mt-20">
+                <div className="bg-red-900/30 p-6 rounded-full mb-6">
+                  <PackageOpen size={60} className="text-red-400" />
                 </div>
-              }
-            </div>
-          </motion.div>
-        }
 
+                <h2 className="text-2xl font-semibold mb-2">No Orders Yet</h2>
+                <p className="text-gray-400 mb-6 max-w-md">
+                  Looks like you haven’t placed any orders yet. Explore delicious meals and order your first dish today!
+                </p>
 
-        {active === "Account Details" &&
+                <button
+                  onClick={() => (window.location.href = "/restaurants")}
+                  className="flex items-center gap-2 bg-red-700 hover:bg-red-600 px-6 py-3 rounded-full text-white font-medium transition-all shadow-lg"
+                >
+                  <ShoppingBag size={18} />
+                  Order Now
+                </button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Account Details Section */}
+      {active === "Account Details" &&
           <motion.div
             key={active}
             initial={{ opacity: 0, y: 20 }}
@@ -256,9 +253,9 @@ export default function Dashboard() {
             </div>
           </motion.div>
         }
-
-      </div>
     </div>
+  </div>
+</div>
   );
 }
 

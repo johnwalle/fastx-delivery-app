@@ -45,6 +45,7 @@ const useAddAdmin = () => {
       } else {
         setError(`Unexpected response status: ${response.status}`);
       }
+      return response;
     } catch (err) {
       setError(
         err.response?.data?.message ||

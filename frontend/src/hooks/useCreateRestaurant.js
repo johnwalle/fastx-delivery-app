@@ -56,6 +56,7 @@ const useCreateRestaurant = () => {
             } else {
                 setError(`Unexpected response status: ${response.status}`);
             }
+            return response;
         } catch (error) {
 
             setOpen(true);

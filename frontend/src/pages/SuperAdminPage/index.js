@@ -7,7 +7,7 @@ import authStore from '../../store/auth.store';
 import { useNavigate } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import { ChevronDown, PackageOpen, Plus } from 'lucide-react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, FormControl, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select } from '@mui/material';
 import axios from "axios";
 import CreateRestaurantPage from '../CreateRestaurantPage';
 import useRestaurantStore from '../../store/restaurant.store';
@@ -115,9 +115,9 @@ function OrdersList({ orderList, expanded, handleChange, handleStatusChange, for
                       label="Status"
                       onChange={(event) => handleStatusChange(event, order._id)}
                     >
-                      <MenuItem value="Preparing">Preparing</MenuItem>
-                      <MenuItem value="On the Way">On the Way</MenuItem>
-                      <MenuItem value="Delivered">Delivered</MenuItem>
+                      <MenuItem sx={{color: '#dc2626'}} value="Preparing">Preparing</MenuItem>
+                      <MenuItem sx={{color: '#dc2626'}} value="On the Way">On the Way</MenuItem>
+                      <MenuItem sx={{color: '#dc2626'}} value="Delivered">Delivered</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -340,62 +340,71 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#330000] to-[#550000] text-white font-sans">
-      {/* Sidebar */}
-      <div
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } fixed md:static z-20 w-64 bg-[#a10000] transition-transform duration-300 flex flex-col`}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-red-800">
-          <div className="flex items-center gap-2">
-            <a href="/">
-              <img
-               src={fastX_logo}
-               alt="fastX logoX"
-               className="w-32 h-auto md:w-40"
-               />
-            </a>
-          </div>
-          <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
-            ✕
-          </button>
-        </div>
-
-        <nav className="flex-1 mt-4 space-y-1">
-          {menuItems.map(({ name, icon: Icon }) => (
-            <motion.button
-              key={name}
-              whileHover={{ scale: 1.05 }}
-              className={`flex items-center gap-3 w-full px-5 py-3 text-left transition-all ${
-                active === name ? "bg-red-700 font-semibold" : "hover:bg-red-800"
-              }`}
-              onClick={() => setActive(name)}
-            >
-              <Icon size={20} />
-              {name}
-            </motion.button>
-          ))}
-        </nav>
-
-        <LogoutButton />
+  {/* Sidebar - Fixed on desktop, overlay on mobile */}
+  <div
+    className={`${
+      sidebarOpen ? "translate-x-0" : "-translate-x-full"
+   } fixed inset-y-0 left-0 z-20 w-64 bg-[#a10000] flex flex-col transition-transform duration-300 md:translate-x-0`}
+>
+    <div className="flex items-center justify-between p-4 border-b border-red-800">
+      <div className="flex items-center gap-2">
+        <a href="/">
+          <img
+            src={fastX_logo}
+            alt="fastX logo"
+            className="w-32 h-auto md:w-40"
+          />
+        </a>
       </div>
+      <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
+        ✕
+      </button>
+    </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6 md:p-10 relative">
-        <button
-          className="md:hidden absolute top-4 left-4"
-          onClick={() => setSidebarOpen(true)}
+    <nav className="flex-1 mt-4 space-y-1 overflow-y-auto px-3">
+      {menuItems.map(({ name, icon: Icon }) => (
+        <motion.button
+          key={name}
+          whileHover={{ scale: 1.05 }}
+          className={`flex items-center gap-3 w-full px-5 py-3 text-left transition-all rounded-md ${
+            active === name ? "bg-red-700 font-semibold" : "hover:bg-red-800"
+          }`}
+          onClick={() => {
+            setActive(name);
+            setSidebarOpen(false); // Optional: close sidebar on mobile after selection
+          }}
         >
-          <Menu size={24} />
-        </button>
+          <Icon size={20} />
+          {name}
+        </motion.button>
+      ))}
+    </nav>
 
-        {active === "Manage Orders" && 
-          <motion.div
+    <div className="p-4 border-t border-red-800">
+      <LogoutButton />
+    </div>
+  </div>
+
+  {/* Main Content Area - Scrollable independently */}
+  <div className="flex-1 md:ml-64 min-h-screen">
+    <div className="p-6 md:p-10">
+      {/* Mobile Hamburger Button */}
+      {!sidebarOpen && (
+        <button
+        className="md:hidden fixed top-4 left-4 z-30 bg-red-800 p-2 rounded-md shadow-lg"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <Menu size={24} />
+      </button> )}
+
+      {/* Page Content */}
+      {active === "Manage Orders" && (
+        <motion.div
           key={active}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mt-10"
+          className="mt-10 md:mt-0"
         >
           <OrdersList
             orderList={orderList}
@@ -403,50 +412,50 @@ export default function Dashboard() {
             handleChange={handleChange}
             handleStatusChange={handleStatusChange}
             formatDateTime={formatDateTime}
-            />
-
+          />
         </motion.div>
-        }
+      )}
 
-        {active === "Add Restaurants" && 
-          <motion.div
+      {active === "Add Restaurants" && (
+        <motion.div
           key={active}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mt-10"
+          className="mt-10 md:mt-0"
         >
           <CreateRestaurantPage />
         </motion.div>
-        }
+      )}
 
-
-
-        {active === "Manage Restaurant" && 
-          <motion.div
+      {active === "Manage Restaurant" && (
+        <motion.div
           key={active}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mt-10"
+          className="mt-10 md:mt-0"
         >
-          <RestaurantList restaurantsState={restaurantsState} deleteRestaurant={deleteRestaurant}/>
+          <RestaurantList
+            restaurantsState={restaurantsState}
+            deleteRestaurant={deleteRestaurant}
+          />
         </motion.div>
-        }
+      )}
 
-        {active === "Add Admin" && 
-          <motion.div
+      {active === "Add Admin" && (
+        <motion.div
           key={active}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mt-10"
+          className="mt-10 md:mt-0"
         >
-          <AddAdminUser/>
+          <AddAdminUser />
         </motion.div>
-        }
-        
-      </div>
+      )}
     </div>
+  </div>
+</div>
   );
 }
